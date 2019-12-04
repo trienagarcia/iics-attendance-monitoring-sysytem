@@ -1,0 +1,90 @@
+
+.label-admin-center, .label-admin-center:hover, .label-admin-center:focus{
+	color:white;
+	font-family: "Nunito Bold";
+	font-size: 20px;
+	margin-left: 4rem;
+}
+
+/*body{
+	height: 100%;
+	margin-top: 0px;
+	padding: 0px;
+}*/
+.admin-container{
+	display: table;
+	height: 100%;
+	/*margin: 4% auto;*/
+	max-width: 32%;
+}
+
+.admin-card-container{
+	display: table-cell;
+	vertical-align: middle;
+}
+.admin-card {
+	/*box-shadow:0 0 4px rgba(0,0,0,0.1);*/
+	border-radius: 10px;
+}
+
+.login-form-title{
+	font-size: 22px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.welcome-form-title h5.system-form-title{
+	font-style: italic;
+}
+
+.welcome-form-title h3{
+   font-size: 26px;
+}
+
+.login-form-container{
+	padding: 0px 20px;
+}
+.checkbox-inline input{
+	margin-right: 5px;
+}
+
+.login-forgotpassword-label{
+	color: #0a3e5d;
+	float:right;
+	font-weight: bold;
+	text-decoration: none!important;
+}
+
+.btn-login{
+	background-color: #fdeb7f;
+	border-color: unset;
+	font-size: 20px;
+	margin-top: 10px;
+	border-radius: 50px;
+	text-transform: uppercase;
+	padding: 6px 70px;
+}
+
+.btn-login:hover, .btn-login:focus{
+	border-color: unset;
+	background-color: #f5e078;
+}
+
+.forgot-password {
+	cursor: pointer;
+	font-weight: 500;
+}
+
+.about-us {
+	cursor: pointer;
+	font-weight: 500;
+}
+
+@media (max-width: 320px){
+.admin-container{
+
+	margin: 20% auto;
+	max-width: 100%;
+}

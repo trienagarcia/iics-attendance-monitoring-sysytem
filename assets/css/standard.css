@@ -1,0 +1,21 @@
+.form-control {
+	background-color: #c4dfe9;
+	border-radius: 1rem;
+
+}
+
+.form-control::placeholder{
+	text-align: center; 
+}
+
+.btn-primary{
+	background-color: #ce8a0d;
+	border-color: unset;
+	border-radius: 50px;
+	text-transform: uppercase;
+}
+
+.btn-primary:hover, .btn-primary:focus{
+	border-color: unset;
+	background-color: #bb7c08;
+}
