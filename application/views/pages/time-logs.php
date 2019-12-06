@@ -39,11 +39,11 @@
 </div>
 
 <script>
-	var reports
+	var logs;
 	$(document).ready(function() {
 		$('#submitted-reports a').removeClass('nav-color');
 		$('#submitted-reports a').addClass('nav-active');
-			reports = $("#table-submitted-reports").DataTable({
+			logs = $("#table-submitted-reports").DataTable({
 				ajax: {
 					url: "<?=base_url()?>ajax/get-time-logs",
 					type: 'GET',
@@ -60,6 +60,10 @@
 				columnDefs: [
 					]
 		});
+
+			setInterval( function () {
+				logs.ajax.reload();
+			}, 2000 );
 
 			$(document).on('click', '.btn-approve', function(data) {
 				var report_id = $(this).attr('data-id');

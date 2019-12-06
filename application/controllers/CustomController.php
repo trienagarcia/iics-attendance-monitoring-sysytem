@@ -101,25 +101,28 @@ class CustomController extends CI_Controller
 
         $rfid_data = json_decode($json_obj);
         $rfid_id = $rfid_data->id;
+        $rfid_timestamp = $rfid_data->timestamp;
 
-        if($this->session->userdata('rfid_data')) {
+        
+
+        if($this->session->userdata('rfid_data') && $this->session->userdata('rfid_time')) {
             // Compare RFID wth session
 
-            if($this->session->userdata('rfid_data') == $rfid_id) {
+            if($this->session->userdata('rfid_data') == $rfid_id && $this->session->userdata('rfid_time') == $rfid_timestamp) {
                 echo json_encode(array('success' => true, 'message' => 'existing', 'data' => $rfid_id));
                 return;
             }
 
         }else{
              $this->session->set_userdata('rfid_data', $rfid_id);
+             $this->session->set_userdata('rfid_time', $rfid_timestamp);
             return;
         } 
         
 
         $this->session->set_userdata('rfid_data', $rfid_id);
+        $this->session->set_userdata('rfid_time', $rfid_timestamp);
         $rfid = $this->Custom_model->get_existing_rfids($rfid_id);
-
-        // echo "rfid: " . $rfid_id . "<br>";
 
         if ($rfid) {
             $person_id = $rfid->person_id;

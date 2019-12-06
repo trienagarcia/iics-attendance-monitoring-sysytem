@@ -4,6 +4,7 @@
 			<h3>Home</h3>
 			<div class="announce-images">
 				<div class="row">
+
 				</div>
 			</div>
 		</div>
