@@ -64,7 +64,7 @@
 					<a class="nav-link nav-color" href="<?=base_url()?>time-logs-user">My Time Logs</a>
 				</li>
 				<li id="submitted-reports" class="nav-item">
-					<a class="nav-link nav-color" href="#">My Requests</a>
+					<a class="nav-link nav-color" href="<?=base_url()?>submitted-requests">My Requests</a>
 				</li>
 			<?php } ?>
 		</ul>

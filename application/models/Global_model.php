@@ -19,6 +19,15 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		function get_all_data_with_order($table, $select, $order_field, $order_orient)
+		{
+			$this->db->select($select);
+			$this->db->from($table);
+			$this->db->order_by($order_field, $order_orient);
+			$q = $this->db->get();
+			return $q->result();
+		}
+
 		function get_data_with_query($table, $select, $query)
 		{
 			$this->db->select($select);

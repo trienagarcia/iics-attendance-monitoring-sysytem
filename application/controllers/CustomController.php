@@ -55,7 +55,7 @@ class CustomController extends CI_Controller
         );
 
         $response = $this->Global_model->insert_data($table, $data);
-        print_r(json_encode($faculty_id));
+        print_r(json_encode($response));
     }
 
     public function updatePassword()
@@ -93,6 +93,25 @@ class CustomController extends CI_Controller
         print_r(json_encode($result));
     }
 
+    public function addNewRequest()
+    {
+        $table = 'requests';
+        $person_id = $this->session->userdata('person_id');
+        $data = array(
+            'request_date' => $this->input->post('date'),
+            'person_id' => $person_id,
+            'time_from' => $this->input->post('time_from'),
+            'time_to' => $this->input->post('time_to'),
+            'room_id' => $this->input->post('room'),
+            'section_id' => $this->input->post('section'),
+            'course_id' => $this->input->post('course'),
+            'status_id' => 1
+        );
+
+        $response = $this->Global_model->insert_data($table, $data);
+        print_r(json_encode($response));
+    }
+
     public function checkIncomingRfid() {
         $this->load->helper("url");
         
@@ -103,7 +122,7 @@ class CustomController extends CI_Controller
         $rfid_id = $rfid_data->id;
         $rfid_timestamp = $rfid_data->timestamp;
 
-        
+
 
         if($this->session->userdata('rfid_data') && $this->session->userdata('rfid_time')) {
             // Compare RFID wth session
@@ -177,9 +196,21 @@ class CustomController extends CI_Controller
 
 
     public function getCourses() {
-        $courses = $this->Global_model->get_all_data("course", "course_id, course_code");
+        $courses = $this->Global_model->get_all_data("course", "*");
 
         print_r(json_encode($courses));
+    }
+
+    public function getRooms() {
+        $rooms = $this->Global_model->get_all_data("rooms", "*");
+
+        print_r(json_encode($rooms));
+    }
+
+    public function getSections() {
+        $sections = $this->Global_model->get_all_data_with_order("sections", "*", "sections.year_level", "ASC");
+
+        print_r(json_encode($sections));
     }
 
     public function getRfid() {
@@ -197,6 +228,12 @@ class CustomController extends CI_Controller
 
     public function getUserTimeLogs() {
         $result = $this->Custom_model->get_all_user_time_logs();
+        print_r(json_encode($result));
+    }
+
+    public function getUserSubmittedRequests() {
+        $person_id = $this->session->userdata('person_id');
+        $result = $this->Custom_model->get_user_submitted_requests($person_id);
         print_r(json_encode($result));
     }
 }

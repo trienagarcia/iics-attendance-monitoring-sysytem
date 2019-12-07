@@ -77,6 +77,30 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		/*
+			SELECT * FROM `requests` 
+			INNER JOIN `rooms`
+			ON requests.room_id = rooms.room_id
+			INNER JOIN `sections`
+			ON requests.section_id = sections.section_id
+			INNER JOIN `course`
+			ON requests.course_id = course.course_id
+			INNER JOIN `status`
+			ON requests.status_id = `status`.status_id
+			WHERE requests.person_id = ;
+		*/
+		public function get_user_submitted_requests($person_id) {
+			$this->db->select("*");
+			$this->db->from("requests");
+			$this->db->join("rooms", "requests.room_id = rooms.room_id");
+			$this->db->join("sections", "requests.section_id = sections.section_id");
+			$this->db->join("course", "requests.course_id = course.course_id");
+			$this->db->join("status", "requests.status_id = status.status_id");
+			$this->db->where("requests.person_id = ", $person_id);
+			$q = $this->db->get();
+			return $q->result();
+		}
+
 		// public function get_all_available_rfids() {
 		// 	$this->db->select("*");
 		// 	$this->db->from("person");
