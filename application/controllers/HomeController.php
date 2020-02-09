@@ -85,7 +85,7 @@ class HomeController extends CI_Controller {
 		$data['head'] = array(
 			"title"         =>  "Time Logs | Attendance Monitoring System",
 			);
-		$data['faculty'] = $this->Custom_model->get_all_users();
+		$data['faculty'] = json_decode(json_encode($this->Custom_model->get_all_users()), true);
 		$this->load->view('layouts/template', $data);
 	}
 

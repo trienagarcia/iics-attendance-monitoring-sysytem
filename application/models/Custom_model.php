@@ -77,6 +77,11 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		// annthonite
+		public function get_filtered_time_logs() {
+			var_dump($this->input->post('sProfessor')); die();
+		}
+
 		/*
 			SELECT * FROM `requests` 
 			INNER JOIN `rooms`

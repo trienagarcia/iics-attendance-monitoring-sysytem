@@ -236,4 +236,10 @@ class CustomController extends CI_Controller
         $result = $this->Custom_model->get_user_submitted_requests($person_id);
         print_r(json_encode($result));
     }
+
+    // annthonite
+    public function getFilteredTimeLogs() {
+        $aResult = $this->Custom_model->get_filtered_time_logs();
+        print_r(json_encode($aResult));
+    }
 }

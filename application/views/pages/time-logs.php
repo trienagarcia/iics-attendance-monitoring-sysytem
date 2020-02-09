@@ -13,10 +13,10 @@
 				<div class="label-input">Professors</div>
 				<select class="form-control" name="professor" id="professor" data-parsley-required="true">
 					<option disabled selected></option>
-					<?php var_dump($faculty)
-					//foreach ($faculty as $f) {
-						// echo '<option value="'.$f['person_id'].'">'.$r['name'].'</option>';
-						// } 
+					<?php
+					foreach ($faculty as $f) {
+						echo '<option value="'.$f['person_id'].'">'.$f['name'].'</option>';
+					} 
 					?>
 		        </select>
 			</div>
@@ -69,11 +69,11 @@
 		$('#date_picker').datepicker({
 			maxDate: '0',
 			onSelect: function(sDate) {
-				console.log(sDate);
+				getFilteredTimeLogs('', sDate);
 			},
 		});
-		$('#professor').change(function() {
-
+		$('#professor').change(function(sProfessor) {
+			getFilteredTimeLogs($('#professor').val(), '');
 		});
 		
 		$('#submitted-reports a').removeClass('nav-color');
@@ -140,23 +140,31 @@
 
 	// annthonite
 	function getFilteredTimeLogs(sProfessor, sTime) {
-		$("#table-submitted-reports").DataTable({
-				ajax: {
-					url: "<?=base_url()?>ajax/get-filter-time-logs",
-					data: {sProfessor: sProfessor, sTime: sTime},
-					type: 'POST',
-					dataSrc: ''
-				},
-				responsive:true,
-				"order": [[ 0, "desc" ]],
-				columns: [
-				{ data: 'date' },
-				{ data: 'name'},
-				{ data: 'time_in' },
-				{ data: 'time_out'},
-				],
-				columnDefs: [
-					]
-		});
+		$.ajax({
+				  	url: "<?=base_url()?>ajax/get-filter-time-logs",
+				  	type: "POST",
+				  	data: {sProfessor: sProfessor, sTime: sTime},
+				  	success: function(data) {
+				  		
+				  	}
+				  });
+		// $("#table-submitted-reports").DataTable({
+		// 		ajax: {
+		// 			url: "<?=base_url()?>ajax/get-filter-time-logs",
+		// 			data: {sProfessor: sProfessor, sTime: sTime},
+		// 			type: 'POST',
+		// 			dataSrc: ''
+		// 		},
+		// 		responsive:true,
+		// 		"order": [[ 0, "desc" ]],
+		// 		columns: [
+		// 		{ data: 'date' },
+		// 		{ data: 'name'},
+		// 		{ data: 'time_in' },
+		// 		{ data: 'time_out'},
+		// 		],
+		// 		columnDefs: [
+		// 			]
+		// });
 	}
 </script>
