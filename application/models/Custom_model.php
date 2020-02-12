@@ -60,21 +60,59 @@ date_default_timezone_set('Asia/Taipei');
 			return null;
 		}
 
+		/*
+		-- TODO ADD DATES to CI sql statement
+		-- TODO ADD REMARKS
+		SELECT * FROM `schedule` s 
+		LEFT JOIN person p ON s.person_id = p.person_id 
+		LEFT JOIN `logs` log ON log.person_id = p.person_id 
+		LEFT JOIN rooms room ON room.room_id = s.room_id 
+		LEFT JOIN course c ON c.course_id = s.course_id 
+		LEFT JOIN sections sec ON sec.section_id = s.section_id 
+		LEFT JOIN attendance a ON a.attendance_id = log.attendance_id
+		 AND log.log_date < CURRENT_DATE
+		*/
 		public function get_all_time_logs() {
-			$this->db->select("*");
-			$this->db->from("person");
-			$this->db->join("logs", "person.person_id = logs.person_id");
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id", "left");
+			$this->db->join("logs", "logs.person_id = person.person_id", "left");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id", "left");
+			$this->db->join("course", "course.course_id = schedule.course_id", "left");
+			$this->db->join("sections", "sections.section_id = schedule.section_id", "left");
+			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id", "left");
+			// ADD and date
+
 			$q = $this->db->get();
 			return $q->result();
 		}
 
+		/*
+			SELECT * FROM `schedule` s 
+			INNER JOIN person p ON s.person_id = p.person_id 
+			INNER JOIN `logs` log ON log.person_id = p.person_id 
+			INNER JOIN rooms room ON room.room_id = s.room_id 
+			INNER JOIN course c ON c.course_id = s.course_id 
+			INNER JOIN sections sec ON sec.section_id = s.section_id 
+			INNER JOIN attendance a ON a.attendance_id = log.attendance_id AND p.person_id = 8
+		*/
 		public function get_all_user_time_logs() {
-			$this->db->select("*");
-			$this->db->from("person");
-			$this->db->join("logs", "person.person_id = logs.person_id");
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id");
+			$this->db->join("logs", "logs.person_id = person.person_id");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->join("course", "course.course_id = schedule.course_id");
+			$this->db->join("sections", "sections.section_id = schedule.section_id");
+			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");
 			$this->db->where("person.person_id = ", $this->session->userdata('person_id'));
 			$q = $this->db->get();
 			return $q->result();
+		}
+
+		// annthonite
+		public function get_filtered_time_logs() {
+			var_dump($this->input->post('sProfessor')); die();
 		}
 
 		/*

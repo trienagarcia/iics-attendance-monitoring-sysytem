@@ -10,7 +10,8 @@
 					<tr>
 						<th class="hidden">Person ID</th>
 						<th>Email</th>
-						<th>Name</th>
+						<th>First Name</th>
+						<th>Last Name</th>
 						<th>Faculty Number</th>
 						<th>RFID</th>
 						<th>Date Created</th>
@@ -22,7 +23,8 @@
 					<tr>
 						<th class="hidden">Person ID</th>
 						<th>Email</th>
-						<th>Name</th>
+						<th>First Name</th>
+						<th>Last Name</th>
 						<th>Faculty Number</th>
 						<th>RFID</th>
 						<th>Date Created</th>
@@ -115,7 +117,8 @@
 				columns: [
 				{ data: 'person_id'},
 				{ data: 'email' },
-				{ data: 'name' },
+				{ data: 'first_name' },
+				{ data: 'last_name' },
 				{ data: 'person_number'},
 				{ data: 'rfid_data'},
 				{ data: 'created_at'},

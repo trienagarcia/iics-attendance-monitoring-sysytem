@@ -75,7 +75,7 @@
 		<ul class="navbar-nav">	
 			<li class="nav-item dropdown">
 				<a class="nav-link nav-color dropdown-toggle nav-user" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<?= $this->session->userdata('name'); ?>
+					<?= $this->session->userdata('first_name') . ' ' . $this->session->userdata('last_name'); ?>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 					<a class="dropdown-item" href="<?=base_url()?>change-password">Change Password</a>

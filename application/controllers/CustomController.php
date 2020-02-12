@@ -221,8 +221,11 @@ class CustomController extends CI_Controller
         print_r(json_encode($rfids));
     }
 
+
     public function getTimeLogs() {
         $result = $this->Custom_model->get_all_time_logs();
+
+        // print("<pre>".print_r($result,true)."</pre>");
         print_r(json_encode($result));
     }
 
@@ -235,5 +238,11 @@ class CustomController extends CI_Controller
         $person_id = $this->session->userdata('person_id');
         $result = $this->Custom_model->get_user_submitted_requests($person_id);
         print_r(json_encode($result));
+    }
+
+    // annthonite
+    public function getFilteredTimeLogs() {
+        $aResult = $this->Custom_model->get_filtered_time_logs();
+        print_r(json_encode($aResult));
     }
 }

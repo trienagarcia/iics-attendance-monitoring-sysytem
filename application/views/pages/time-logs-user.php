@@ -7,18 +7,28 @@
 			<table id="table-submitted-reports" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<th>Date</th>
-						<th>Person Name</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Course</th>
+						<th>Section</th>
+						<th>Room No.</th>
 						<th>Time In</th>
 						<th>Time Out</th>
+						<th>Attendance</th>
+						<th>Remarks</th>
 					</tr>
 				</thead>
 				<tfoot>
 					<tr>
-						<th>Date</th>
-						<th>Person Name</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Course</th>
+						<th>Section</th>
+						<th>Room No.</th>
 						<th>Time In</th>
 						<th>Time Out</th>
+						<th>Attendance</th>
+						<th>Remarks</th>
 					</tr>
 				</tfoot>
 			</table>
@@ -43,10 +53,15 @@
 				responsive:true,
 				"order": [[ 0, "desc" ]],
 				columns: [
-				{ data: 'date' },
-				{ data: 'name'},
+				{ data: 'first_name'},
+				{ data: 'last_name'},
+				{ data: 'course_code' },
+				{ data: 'section_name' },
+				{ data: 'room_number' },
 				{ data: 'time_in' },
 				{ data: 'time_out'},
+				{ data: 'attendance_name' },
+				{ data: 'remarks'}
 				],
 				columnDefs: [
 					]

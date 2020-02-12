@@ -54,9 +54,9 @@
 					check_incoming_rfid('yes');
 				});
 
-				setInterval(function(){ 
-					check_incoming_rfid();
-				}, 1500);
+				// setInterval(function(){ 
+				// 	check_incoming_rfid();
+				// }, 1500);
 
 			});
 		</script>
