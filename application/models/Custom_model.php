@@ -72,8 +72,9 @@ date_default_timezone_set('Asia/Taipei');
 		LEFT JOIN attendance a ON a.attendance_id = log.attendance_id
 		 AND log.log_date < CURRENT_DATE
 		*/
+		 //annthonite, modified the select statement, add logs_id
 		public function get_all_time_logs() {
-			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id", "left");
 			$this->db->join("logs", "logs.person_id = person.person_id", "left");
@@ -97,7 +98,7 @@ date_default_timezone_set('Asia/Taipei');
 			INNER JOIN attendance a ON a.attendance_id = log.attendance_id AND p.person_id = 8
 		*/
 		public function get_all_user_time_logs() {
-			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->select("lperson.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("logs", "logs.person_id = person.person_id");
@@ -112,7 +113,7 @@ date_default_timezone_set('Asia/Taipei');
 
 		// annthonite
 		public function get_filtered_time_logs() {
-			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("logs", "logs.person_id = person.person_id");

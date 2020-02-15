@@ -146,8 +146,8 @@
 				{ data: 'remarks'},
 				{ defaultContent: 
 					`
-					<button class='btn btn-success btn-sm btn-success btnUpdateAttendance'>Edit Attendance</button><br />
-					<button class='btn btn-info btn-sm btn-info btnUpdateRemarks'>Edit Remarks</button>
+					<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance'>Edit Attendance</button><br />
+					<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks'>Edit Remarks</button>
 					`
 				},
 
@@ -231,8 +231,8 @@
 						{ data: 'remarks'},
 						{ defaultContent: 
 							`
-							<button class='btn btn-success btn-sm btn-success btnUpdateAttendance'>Edit Attendance</button><br />
-							<button class='btn btn-info btn-sm btn-info btnUpdateRemarks'>Edit Remarks</button>
+							<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance'>Edit Attendance</button><br />
+							<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks'>Edit Remarks</button>
 							`
 						},
 					],
@@ -240,17 +240,19 @@
 				});
 			}
 
-			document.getElementsByClassName("btnEUpdateAttendance").addEventListener("click", function () {
-				console.log('Update attendance');
+			$(document).on('click', '#btnUpdateAttendance', function() {
+				//use this to get id of the logs
+				var id = $(this).data('id');
+
+					$('#dynamicModal').modal('show');
 			});
 
-			// document.onclick('.btnEUpdateAttendance', function () {
-			// 	console.log('Update attendance');
-			// });
+			$(document).on('click', '#btnUpdateRemarks', function() {
+				//use this to get id of the logs
+				var id = $(this).data('id');
 
-			// $(document).on('click', '.btnEUpdateRemarks', function() {
-			// 	console.log('Update remarks');
-			// });
+					$('#dynamicModal').modal('show');
+			});
 
 			// $('.btnEUpdateAttendance').click(function () {
 			// 	console.log('Update attendance');
@@ -265,8 +267,6 @@
 			// 	// })
 			// });
 
-
-			
 
 			// function modal (sTitle, sBody) {
 			// 	`
