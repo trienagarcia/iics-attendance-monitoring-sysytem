@@ -71,31 +71,21 @@
 	</div>
 
 	<!-- annthonite -->
-	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dynamicModal" data-whatever="@mdo">Open modal for @mdo</button>
-	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dynamicModal" data-whatever="@fat">Open modal for @fat</button>
-
 	<div class="modal fade" id="dynamicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
+					<h4 class="modal-title" id="exampleModalLabel">
+						<!-- Title -->
+					</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="exampleModalLabel">New message</h4>
 				</div>
 				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="recipient-name" class="control-label">Recipient:</label>
-							<input type="text" class="form-control" id="recipient-name">
-						</div>
-						<div class="form-group">
-							<label for="message-text" class="control-label">Message:</label>
-							<textarea class="form-control" id="message-text"></textarea>
-						</div>
-					</form>
+					<!-- Form -->
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Send message</button>
+					<button type="button" class="btn btn-info">Submit</button>
 				</div>
 			</div>
 		</div>
@@ -240,19 +230,54 @@
 				});
 			}
 
-			$(document).on('click', '#btnUpdateAttendance', function() {
-				//use this to get id of the logs
-				var id = $(this).data('id');
+			// $(document).on('click', '#btnUpdateAttendance', function() {
+			// 	//use this to get id of the logs
+			// 	var id = $(this).data('id');
 
-					$('#dynamicModal').modal('show');
+				
+			// });
+
+			$(document).on('click', '#btnUpdateAttendance', function (event) {
+				var button = $(event.relatedTarget) // Button that triggered the modal
+				var recipient = button.data('whatever') // Extract info from data-* attributes
+				// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+				// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+				var modal = $('#dynamicModal');
+				var sBody = `
+				<div class="form-group">
+					<label for="usr">Name:</label>
+					<input type="text" class="form-control" id="usr">
+				</div>
+				<div class="form-group">
+					<label for="pwd">Password:</label>
+					<input type="password" class="form-control" id="pwd">
+				</div>
+				`;
+				modal.find('.modal-title').text('Edit Attendance');
+				modal.find('.modal-body input').val(sBody);
+
+				modal.modal('show');
 			});
 
-			$(document).on('click', '#btnUpdateRemarks', function() {
-				//use this to get id of the logs
-				var id = $(this).data('id');
+			$(document).on('click', '#btnUpdateRemarks', function (event) {
+				var button = $(event.relatedTarget) // Button that triggered the modal
+				var recipient = button.data('whatever') // Extract info from data-* attributes
+				// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+				// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+				var modal = $('#dynamicModal')
+				modal.find('.modal-title').text('Edit Remarks');
+				modal.find('.modal-body input').val('This is to edit remarks');
 
-					$('#dynamicModal').modal('show');
+				modal.modal('show');
 			});
+
+			// $(document).on('click', '#btnUpdateRemarks', function() {
+			// 	//use this to get id of the logs
+			// 	var id = $(this).data('id');
+
+			// 	$('#dynamicModal').modal('show');
+			// });
+
 
 			// $('.btnEUpdateAttendance').click(function () {
 			// 	console.log('Update attendance');
