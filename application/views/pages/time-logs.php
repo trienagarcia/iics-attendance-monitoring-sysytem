@@ -22,7 +22,7 @@
 			</div>
 			<div class="col">
 				<div class="label-input">Date</div>
-				<input type="inpute" class="form-control" id="date_picker" name="date_picker">
+				<input class="form-control" id="date_picker" name="date_picker">
 			</div>
 		<!-- annthonite -->
 		</div>
@@ -49,6 +49,7 @@
 						<th>Time Out</th>
 						<th>Attendance</th>
 						<th>Remarks</th>
+						<th>Actions</th>
 				</thead>
 				<tfoot>
 					<tr>
@@ -61,6 +62,7 @@
 						<th>Time Out</th>
 						<th>Attendance</th>
 						<th>Remarks</th>
+						<th>Actions</th>
 					</tr>
 				</tfoot>
 			</table>
@@ -68,21 +70,57 @@
 		</div>
 	</div>
 
-	
-</div>
+	<!-- annthonite -->
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dynamicModal" data-whatever="@mdo">Open modal for @mdo</button>
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dynamicModal" data-whatever="@fat">Open modal for @fat</button>
+
+	<div class="modal fade" id="dynamicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="exampleModalLabel">New message</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="recipient-name" class="control-label">Recipient:</label>
+							<input type="text" class="form-control" id="recipient-name">
+						</div>
+						<div class="form-group">
+							<label for="message-text" class="control-label">Message:</label>
+							<textarea class="form-control" id="message-text"></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Send message</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- annthonite -->
+
+	</div>
 
 <script>
 	var logs;
 	$(document).ready(function() {
 		// annthonite
+
+		$('#professor').change(function(sProfessor) {
+			getFilteredTimeLogs($('#professor').val(), $('#date_picker').val());
+		});
+		
 		$('#date_picker').datepicker({
 			maxDate: '0',
+			dateFormat: 'yy-mm-dd',
+			changeMonth: true,
+			changeYear: true,
 			onSelect: function(sDate) {
-				getFilteredTimeLogs('', sDate);
+				getFilteredTimeLogs($('#professor').val(), sDate);
 			},
-		});
-		$('#professor').change(function(sProfessor) {
-			getFilteredTimeLogs($('#professor').val(), '');
 		});
 		
 		$('#submitted-reports a').removeClass('nav-color');
@@ -105,15 +143,31 @@
 				{ data: 'time_in' },
 				{ data: 'time_out'},
 				{ data: 'attendance_name' },
-				{ data: 'remarks'}
+				{ data: 'remarks'},
+				{ defaultContent: 
+					`
+					<button class='btn btn-success btn-sm btn-success btnUpdateAttendance'>Edit Attendance</button><br />
+					<button class='btn btn-info btn-sm btn-info btnUpdateRemarks'>Edit Remarks</button>
+					`
+				},
+
+				// `<div class="dropdown">
+				// 	<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				// 			Actions
+				// 		</button>
+				// 		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				// 			<a class="dropdown-item" href="#">Edit Attendance</a>
+				// 			<a class="dropdown-item" href="#">Edit Remarks</a>
+				// 		</div>
+				// 	</div>`
+
 				],
-				columnDefs: [
-					]
+				columnDefs: []
 		});
 
-			setInterval( function () {
-				logs.ajax.reload();
-			}, 2000 );
+			// setInterval( function () {
+			// 	logs.ajax.reload();
+			// }, 2000 );
 
 			$(document).on('click', '.btn-approve', function(data) {
 				var report_id = $(this).attr('data-id');
@@ -151,35 +205,96 @@
 				$(form_id).submit();
 			});
 
+			// annthonite
+			function getFilteredTimeLogs(iProfessorID, sDate) {
+				var sData = "person_id=" + iProfessorID + "&log_date=" + sDate;
+				var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
+				logs.destroy();
+				logs = $("#table-submitted-reports").DataTable({
+					ajax: {
+						url: sUrl,
+						type: 'GET',
+						dataSrc: ''
+					},
+					responsive:true,
+					"order": [[ 0, "desc" ]],
+					columns: [
+						// person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
+						{ data: 'first_name'},
+						{ data: 'last_name'},
+						{ data: 'course_code' },
+						{ data: 'section_name' },
+						{ data: 'room_number' },
+						{ data: 'time_in' },
+						{ data: 'time_out'},
+						{ data: 'attendance_name' },
+						{ data: 'remarks'},
+						{ defaultContent: 
+							`
+							<button class='btn btn-success btn-sm btn-success btnUpdateAttendance'>Edit Attendance</button><br />
+							<button class='btn btn-info btn-sm btn-info btnUpdateRemarks'>Edit Remarks</button>
+							`
+						},
+					],
+					columnDefs: []
+				});
+			}
+
+			document.getElementsByClassName("btnEUpdateAttendance").addEventListener("click", function () {
+				console.log('Update attendance');
+			});
+
+			// document.onclick('.btnEUpdateAttendance', function () {
+			// 	console.log('Update attendance');
+			// });
+
+			// $(document).on('click', '.btnEUpdateRemarks', function() {
+			// 	console.log('Update remarks');
+			// });
+
+			// $('.btnEUpdateAttendance').click(function () {
+			// 	console.log('Update attendance');
+			// 	// $('#dynamicModal').on('show.bs.modal', function (event) {
+			// 	// 	var button = $(event.relatedTarget) // Button that triggered the modal
+			// 	// 	var recipient = button.data('whatever') // Extract info from data-* attributes
+			// 	// 	// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+			// 	// 	// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+			// 	// 	var modal = $(this)
+			// 	// 	modal.find('.modal-title').text('New message to ' + recipient)
+			// 	// 	modal.find('.modal-body input').val(recipient)
+			// 	// })
+			// });
+
+
+			
+
+			// function modal (sTitle, sBody) {
+			// 	`
+			// 	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+			// 		${sTitle}
+			// 	</button>
+			// 	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			// 		<div class="modal-dialog" role="document">
+			// 			<div class="modal-content">
+			// 			<div class="modal-header">
+			// 				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+			// 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			// 				<span aria-hidden="true">&times;</span>
+			// 				</button>
+			// 			</div>
+			// 			<div class="modal-body">
+			// 				${sBody}
+			// 			</div>
+			// 			<div class="modal-footer">
+			// 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			// 				<button type="button" class="btn btn-primary">Save changes</button>
+			// 			</div>
+			// 			</div>
+			// 		</div>
+			// 	</div>
+			// 	`
+			// }
 	});
 
-	// annthonite
-	function getFilteredTimeLogs(sProfessor, sTime) {
-		$.ajax({
-				  	url: "<?=base_url()?>ajax/get-filter-time-logs",
-				  	type: "POST",
-				  	data: {sProfessor: sProfessor, sTime: sTime},
-				  	success: function(data) {
-				  		
-				  	}
-				  });
-		// $("#table-submitted-reports").DataTable({
-		// 		ajax: {
-		// 			url: "<?=base_url()?>ajax/get-filter-time-logs",
-		// 			data: {sProfessor: sProfessor, sTime: sTime},
-		// 			type: 'POST',
-		// 			dataSrc: ''
-		// 		},
-		// 		responsive:true,
-		// 		"order": [[ 0, "desc" ]],
-		// 		columns: [
-		// 		{ data: 'date' },
-		// 		{ data: 'name'},
-		// 		{ data: 'time_in' },
-		// 		{ data: 'time_out'},
-		// 		],
-		// 		columnDefs: [
-		// 			]
-		// });
-	}
+	
 </script>

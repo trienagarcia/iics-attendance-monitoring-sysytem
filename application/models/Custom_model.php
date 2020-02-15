@@ -112,7 +112,18 @@ date_default_timezone_set('Asia/Taipei');
 
 		// annthonite
 		public function get_filtered_time_logs() {
-			var_dump($this->input->post('sProfessor')); die();
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id");
+			$this->db->join("logs", "logs.person_id = person.person_id");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->join("course", "course.course_id = schedule.course_id");
+			$this->db->join("sections", "sections.section_id = schedule.section_id");
+			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");
+			$this->db->where("person.person_id = ", $this->input->get('person_id'));
+			$this->db->where("logs.log_date = ", $this->input->get('log_date'));
+			$q = $this->db->get();
+			return $q->result();
 		}
 
 		/*
