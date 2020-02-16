@@ -72,9 +72,9 @@ date_default_timezone_set('Asia/Taipei');
 		LEFT JOIN attendance a ON a.attendance_id = log.attendance_id
 		 AND log.log_date < CURRENT_DATE
 		*/
-		 //annthonite, modified the select statement, add logs_id
+		 //annthonite, modified the select statement, add logs_id, attendance_id
 		public function get_all_time_logs() {
-			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id", "left");
 			$this->db->join("logs", "logs.person_id = person.person_id", "left");
@@ -83,7 +83,6 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("sections", "sections.section_id = schedule.section_id", "left");
 			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id", "left");
 			// ADD and date
-
 			$q = $this->db->get();
 			return $q->result();
 		}
@@ -98,7 +97,7 @@ date_default_timezone_set('Asia/Taipei');
 			INNER JOIN attendance a ON a.attendance_id = log.attendance_id AND p.person_id = 8
 		*/
 		public function get_all_user_time_logs() {
-			$this->db->select("lperson.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("logs", "logs.person_id = person.person_id");
@@ -113,7 +112,7 @@ date_default_timezone_set('Asia/Taipei');
 
 		// annthonite
 		public function get_filtered_time_logs() {
-			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("logs", "logs.person_id = person.person_id");
@@ -121,8 +120,14 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("course", "course.course_id = schedule.course_id");
 			$this->db->join("sections", "sections.section_id = schedule.section_id");
 			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");
-			$this->db->where("person.person_id = ", $this->input->get('person_id'));
-			$this->db->where("logs.log_date = ", $this->input->get('log_date'));
+
+			if (!empty($this->input->get('person_id'))) {
+				$this->db->where("person.person_id = ", $this->input->get('person_id'));
+			}
+			if (!empty($this->input->get('log_date'))) {
+				$this->db->where("logs.log_date = ", $this->input->get('log_date'));
+			}
+
 			$q = $this->db->get();
 			return $q->result();
 		}

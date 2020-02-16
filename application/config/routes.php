@@ -108,6 +108,8 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 $route['category/(:any)'] = 'homeController/homecategories/$1';
 $route['ajax/get-filter-time-logs'] = 'customController/getFilteredTimeLogs'; //annthonite
+$route['ajax/update-logs'] = 'customController/updateLogs'; //annthonite
+$route['ajax/update-logs-remarks'] = 'customController/updateLogsRemarks'; //annthonite
 // $route['custom/(:any)'] = 'customController/$1';
 // $route['accounts/(:any)'] = 'accountscontroller/$1';
 

@@ -245,4 +245,25 @@ class CustomController extends CI_Controller
         $aResult = $this->Custom_model->get_filtered_time_logs();
         print_r(json_encode($aResult));
     }
+
+    public function updateLogs() { 
+        $table = 'logs';
+        $data = array(
+            'attendance_id' => $this->input->post("attendance_id"),
+            'remarks'       => $this->input->post('remarks')
+        );
+        $field = 'logs_id';
+        $where = $this->input->post('logs_id');
+        return $this->Global_model->update_data($table, $data, $field, $where);
+    }
+
+    public function updateLogsRemarks() {
+        $table = 'logs';
+        $data = array(
+            'remarks' => $this->input->post('remarks')
+        );
+        $field = 'logs_id';
+        $where = $this->input->post('logs_id');
+        return $this->Global_model->update_data($table, $data, $field, $where);
+    }
 }

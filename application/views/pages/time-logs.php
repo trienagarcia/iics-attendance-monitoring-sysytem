@@ -71,11 +71,11 @@
 	</div>
 
 	<!-- annthonite -->
-	<div class="modal fade" id="dynamicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-		<div class="modal-dialog" role="document">
+	<div class="modal fade" id="dynamicModal" tabindex="-1" role="dialog" aria-labelledby="dynamicModalLabel">
+		<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" id="exampleModalLabel">
+					<h4 class="modal-title" id="dynamicModalLabel">
 						<!-- Title -->
 					</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -84,8 +84,9 @@
 					<!-- Form -->
 				</div>
 				<div class="modal-footer">
+					<!-- button -->
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-info">Submit</button>
+					<button type="button" class="btn btn-info" id="updateLogs" data-dismiss="modal">Save</button>
 				</div>
 			</div>
 		</div>
@@ -98,7 +99,6 @@
 	var logs;
 	$(document).ready(function() {
 		// annthonite
-
 		$('#professor').change(function(sProfessor) {
 			getFilteredTimeLogs($('#professor').val(), $('#date_picker').val());
 		});
@@ -115,210 +115,215 @@
 		
 		$('#submitted-reports a').removeClass('nav-color');
 		$('#submitted-reports a').addClass('nav-active');
+		logs = $("#table-submitted-reports").DataTable({
+			ajax: {
+				url: "<?=base_url()?>ajax/get-time-logs",
+				type: 'GET',
+				dataSrc: ''
+			},
+			responsive:true,
+			"order": [[ 0, "desc" ]],
+			columns: [
+				// logs.attendance_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
+				{ data: 'first_name' },
+				{ data: 'last_name' },
+				{ data: 'course_code' },
+				{ data: 'section_name' },
+				{ data: 'room_number' },
+				{ data: 'time_in' },
+				{ data: 'time_out' },
+				{ data: 'attendance_name' },
+				{ data: 'remarks'},
+				{ render: function ( data, type, row, meta ) {
+						var sRemarks = row['remarks'] === null ? '' : row['remarks'];
+						return `
+							<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
+							<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' style="margin-top:5px">Edit Remarks</button>
+						`;
+    				}
+				}
+			]
+		});
+
+		// setInterval( function () {
+		// 	logs.ajax.reload();
+		// }, 2000 );
+
+		$(document).on('click', '.btn-approve', function(data) {
+			var report_id = $(this).attr('data-id');
+			var status = "Approved";
+			var r = confirm("Are you sure you want to approve this report?");
+			if (r == true) {
+				$.ajax({
+				url: "<?=base_url()?>ajax/update-report-status",
+				type: "POST",
+				data: {
+					report_id: report_id,
+					status: status
+				},
+				success: function(data) {
+					alert("Report Successfully Approved");
+					reports.ajax.reload();
+				}
+				});
+			} else {
+				return false;
+			}
+		});
+
+		$(document).on('click', '.btn-reject', function(data) {
+			
+		});
+
+		$(document).on('click', '.btn-view-report', function(data) {
+			var report_id = $(this).attr('data-id');
+			window.location.href = "<?=base_url()?>report/"+report_id;
+		});
+
+		$(document).on('click', '.btn-edit-report', function(data) {
+			var form_id = "#form_" + $(this).attr('data-id');
+			$(form_id).submit();
+		});
+
+		// annthonite
+		function getFilteredTimeLogs(iProfessorID, sDate) {
+			var sData = "person_id=" + iProfessorID + "&log_date=" + sDate;
+			var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
+			logs.destroy();
 			logs = $("#table-submitted-reports").DataTable({
 				ajax: {
-					url: "<?=base_url()?>ajax/get-time-logs",
+					url: sUrl,
 					type: 'GET',
 					dataSrc: ''
 				},
 				responsive:true,
 				"order": [[ 0, "desc" ]],
 				columns: [
-				// person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
-				{ data: 'first_name'},
-				{ data: 'last_name'},
-				{ data: 'course_code' },
-				{ data: 'section_name' },
-				{ data: 'room_number' },
-				{ data: 'time_in' },
-				{ data: 'time_out'},
-				{ data: 'attendance_name' },
-				{ data: 'remarks'},
-				{ defaultContent: 
-					`
-					<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance'>Edit Attendance</button><br />
-					<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks'>Edit Remarks</button>
-					`
-				},
-
-				// `<div class="dropdown">
-				// 	<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				// 			Actions
-				// 		</button>
-				// 		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				// 			<a class="dropdown-item" href="#">Edit Attendance</a>
-				// 			<a class="dropdown-item" href="#">Edit Remarks</a>
-				// 		</div>
-				// 	</div>`
-
+					// log.attendance_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
+					{ data: 'first_name'},
+					{ data: 'last_name'},
+					{ data: 'course_code' },
+					{ data: 'section_name' },
+					{ data: 'room_number' },
+					{ data: 'time_in' },
+					{ data: 'time_out'},
+					{ data: 'attendance_name' },
+					{ data: 'remarks'},
+					{ render: function ( data, type, row, meta ) {
+							var sRemarks = row['remarks'] === null ? '' : row['remarks'];
+							return `
+								<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
+								<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' style="margin-top:5px">Edit Remarks</button>
+							`;
+						}
+					}
 				],
 				columnDefs: []
+			});
+		}
+
+		$(document).on('click', '#btnUpdateAttendance', function (event) {
+			var modal = $('#dynamicModal');
+			var sBody = `
+				<input name="logsid" id="logsid" value="" hidden />		
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="attendance" id="radioPresent" value="1">
+					<label class="form-check-label" for="radioPresent">
+						Present
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="attendance" id="radioAbsent" value="2">
+					<label class="form-check-label" for="radioAbsent">
+						Absent
+					</label>
+				</div><br />
+				<div class="form-group">
+					<label for="textareaRemarks">Remarks</label>
+					<textarea class="form-control" id="textareaRemarks" rows="3" maxlength="150" style="resize: none"></textarea>
+					<small id="textareaRemarksCounter" class="text-muted pull-right"></small>
+				</div>
+			`;
+			var bPresent = $(this).attr('attendanceval') === `1` ? true : false;
+			var bAbsent = $(this).attr('attendanceval') === `2` ? true : false;
+			var iLogID = $(this).attr('logsidval');
+			var sRemarks = $(this).attr('remarksval');
+
+			modal.find('.modal-title').text('Edit Attendance');
+			modal.find('.modal-body').html(sBody);
+			modal.modal('show');
+			
+			$('#radioPresent').attr('checked', bPresent);
+			$('#radioAbsent').attr('checked', bAbsent);
+			$('#logsid').val(iLogID);
+			$('#textareaRemarks').val(sRemarks);
+			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
 		});
 
-			// setInterval( function () {
-			// 	logs.ajax.reload();
-			// }, 2000 );
+		$(document).on('click', '#btnUpdateRemarks', function (event) {
+			var modal = $('#dynamicModal');
+			var sBody = `
+				<input name="logsid" id="logsid" value="" hidden />		
+				<div class="form-group">
+					<label for="textareaRemarks">Remarks</label>
+					<textarea class="form-control" id="textareaRemarks" rows="3" maxlength="150" style="resize: none"></textarea>
+					<small id="textareaRemarksCounter" class="text-muted pull-right"></small>
+				</div>
+			`;
+			var iLogID = $(this).attr('logsidval');
+			var sRemarks = $(this).attr('remarksval');
 
-			$(document).on('click', '.btn-approve', function(data) {
-				var report_id = $(this).attr('data-id');
-				var status = "Approved";
-				var r = confirm("Are you sure you want to approve this report?");
-				if (r == true) {
-				  $.ajax({
-				  	url: "<?=base_url()?>ajax/update-report-status",
-				  	type: "POST",
-				  	data: {
-				  		report_id: report_id,
-				  		status: status
-				  	},
-				  	success: function(data) {
-				  		alert("Report Successfully Approved");
-				  		reports.ajax.reload();
-				  	}
-				  });
-				} else {
-					return false;
-				}
-			});
+			modal.find('.modal-title').text('Edit Remarks');
+			modal.find('.modal-body').html(sBody);
+			modal.modal('show');
+		
+			$('#logsid').val(iLogID);
+			$('#textareaRemarks').val(sRemarks);
+			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
+		});
 
-			$(document).on('click', '.btn-reject', function(data) {
-				
-			});
+		$(document).on('keydown keypress keyup', '#textareaRemarks', function () {
+			var iCounter = $(this).val().length;
+			$('#textareaRemarksCounter').html(iCounter + '/150');
+		});
 
-			$(document).on('click', '.btn-view-report', function(data) {
-				var report_id = $(this).attr('data-id');
-				window.location.href = "<?=base_url()?>report/"+report_id;
-			});
-
-			$(document).on('click', '.btn-edit-report', function(data) {
-				var form_id = "#form_" + $(this).attr('data-id');
-				$(form_id).submit();
-			});
-
-			// annthonite
-			function getFilteredTimeLogs(iProfessorID, sDate) {
-				var sData = "person_id=" + iProfessorID + "&log_date=" + sDate;
-				var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
-				logs.destroy();
-				logs = $("#table-submitted-reports").DataTable({
-					ajax: {
-						url: sUrl,
-						type: 'GET',
-						dataSrc: ''
-					},
-					responsive:true,
-					"order": [[ 0, "desc" ]],
-					columns: [
-						// person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
-						{ data: 'first_name'},
-						{ data: 'last_name'},
-						{ data: 'course_code' },
-						{ data: 'section_name' },
-						{ data: 'room_number' },
-						{ data: 'time_in' },
-						{ data: 'time_out'},
-						{ data: 'attendance_name' },
-						{ data: 'remarks'},
-						{ defaultContent: 
-							`
-							<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance'>Edit Attendance</button><br />
-							<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks'>Edit Remarks</button>
-							`
-						},
-					],
-					columnDefs: []
-				});
+		$(document).on('click', '#updateLogs', function () {
+			if ($('input[name=attendance]').length > 0) {
+				var sUrl = '<?=base_url()?>ajax/update-logs';
+				var oData = {
+					'logs_id'       : $('#logsid').val(),
+					'attendance_id' : $('input[name=attendance]:checked').val(),
+					'remarks'       : $('#textareaRemarks').val()
+				};
+			} else {
+				var sUrl = '<?=base_url()?>ajax/update-logs-remarks';
+				var oData = {
+					'logs_id' : $('#logsid').val(),
+					'remarks' : $('#textareaRemarks').val()
+				};
 			}
 
-			// $(document).on('click', '#btnUpdateAttendance', function() {
-			// 	//use this to get id of the logs
-			// 	var id = $(this).data('id');
-
-				
-			// });
-
-			$(document).on('click', '#btnUpdateAttendance', function (event) {
-				var button = $(event.relatedTarget) // Button that triggered the modal
-				var recipient = button.data('whatever') // Extract info from data-* attributes
-				// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-				// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-				var modal = $('#dynamicModal');
-				var sBody = `
-				<div class="form-group">
-					<label for="usr">Name:</label>
-					<input type="text" class="form-control" id="usr">
-				</div>
-				<div class="form-group">
-					<label for="pwd">Password:</label>
-					<input type="password" class="form-control" id="pwd">
-				</div>
-				`;
-				modal.find('.modal-title').text('Edit Attendance');
-				modal.find('.modal-body input').val(sBody);
-
-				modal.modal('show');
+			/**
+			 * TODO:
+			 * Need to check this part.
+			 * update-logs is working
+			 * update-logs-remarks not working
+			 * this is so weird XD
+			 */
+			$.ajax({
+                url     : sUrl,
+                type    : 'POST',
+                data    : oData,
+                success : function(data) {
+					console.log('Successfully updated');
+				},
+				error   : function (data) {
+					console.log('Error Occured');
+				}
 			});
-
-			$(document).on('click', '#btnUpdateRemarks', function (event) {
-				var button = $(event.relatedTarget) // Button that triggered the modal
-				var recipient = button.data('whatever') // Extract info from data-* attributes
-				// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-				// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-				var modal = $('#dynamicModal')
-				modal.find('.modal-title').text('Edit Remarks');
-				modal.find('.modal-body input').val('This is to edit remarks');
-
-				modal.modal('show');
-			});
-
-			// $(document).on('click', '#btnUpdateRemarks', function() {
-			// 	//use this to get id of the logs
-			// 	var id = $(this).data('id');
-
-			// 	$('#dynamicModal').modal('show');
-			// });
-
-
-			// $('.btnEUpdateAttendance').click(function () {
-			// 	console.log('Update attendance');
-			// 	// $('#dynamicModal').on('show.bs.modal', function (event) {
-			// 	// 	var button = $(event.relatedTarget) // Button that triggered the modal
-			// 	// 	var recipient = button.data('whatever') // Extract info from data-* attributes
-			// 	// 	// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-			// 	// 	// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-			// 	// 	var modal = $(this)
-			// 	// 	modal.find('.modal-title').text('New message to ' + recipient)
-			// 	// 	modal.find('.modal-body input').val(recipient)
-			// 	// })
-			// });
-
-
-			// function modal (sTitle, sBody) {
-			// 	`
-			// 	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-			// 		${sTitle}
-			// 	</button>
-			// 	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			// 		<div class="modal-dialog" role="document">
-			// 			<div class="modal-content">
-			// 			<div class="modal-header">
-			// 				<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-			// 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			// 				<span aria-hidden="true">&times;</span>
-			// 				</button>
-			// 			</div>
-			// 			<div class="modal-body">
-			// 				${sBody}
-			// 			</div>
-			// 			<div class="modal-footer">
-			// 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			// 				<button type="button" class="btn btn-primary">Save changes</button>
-			// 			</div>
-			// 			</div>
-			// 		</div>
-			// 	</div>
-			// 	`
-			// }
+			
+			logs.ajax.reload();
+		});
 	});
 
 	
