@@ -103,6 +103,7 @@
 			getFilteredTimeLogs($('#professor').val(), $('#date_picker').val());
 		});
 		
+		// annthonite
 		$('#date_picker').datepicker({
 			maxDate: '0',
 			dateFormat: 'yy-mm-dd',
@@ -138,16 +139,16 @@
 						var sRemarks = row['remarks'] === null ? '' : row['remarks'];
 						return `
 							<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
-							<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' style="margin-top:5px">Edit Remarks</button>
+							<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `' style="margin-top:5px">Edit Remarks</button>
 						`;
     				}
 				}
 			]
 		});
 
-		// setInterval( function () {
-		// 	logs.ajax.reload();
-		// }, 2000 );
+		setInterval( function () {
+			logs.ajax.reload();
+		}, 2000 );
 
 		$(document).on('click', '.btn-approve', function(data) {
 			var report_id = $(this).attr('data-id');
@@ -213,7 +214,7 @@
 							var sRemarks = row['remarks'] === null ? '' : row['remarks'];
 							return `
 								<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
-								<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' style="margin-top:5px">Edit Remarks</button>
+								<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `' style="margin-top:5px">Edit Remarks</button>
 							`;
 						}
 					}
@@ -222,6 +223,7 @@
 			});
 		}
 
+		// annthonite
 		$(document).on('click', '#btnUpdateAttendance', function (event) {
 			var modal = $('#dynamicModal');
 			var sBody = `
@@ -260,6 +262,7 @@
 			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
 		});
 
+		// annthonite
 		$(document).on('click', '#btnUpdateRemarks', function (event) {
 			var modal = $('#dynamicModal');
 			var sBody = `
@@ -282,12 +285,15 @@
 			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
 		});
 
+		// annthonite
 		$(document).on('keydown keypress keyup', '#textareaRemarks', function () {
 			var iCounter = $(this).val().length;
 			$('#textareaRemarksCounter').html(iCounter + '/150');
 		});
 
+		// annthonite
 		$(document).on('click', '#updateLogs', function () {
+			console.log($('#logsid').val());
 			if ($('input[name=attendance]').length > 0) {
 				var sUrl = '<?=base_url()?>ajax/update-logs';
 				var oData = {
@@ -303,22 +309,16 @@
 				};
 			}
 
-			/**
-			 * TODO:
-			 * Need to check this part.
-			 * update-logs is working
-			 * update-logs-remarks not working
-			 * this is so weird XD
-			 */
+			// annthonite
 			$.ajax({
                 url     : sUrl,
                 type    : 'POST',
                 data    : oData,
                 success : function(data) {
-					console.log('Successfully updated');
+					alert('Successfully updated');
 				},
 				error   : function (data) {
-					console.log('Error Occured');
+					alert('Error Occured');
 				}
 			});
 			

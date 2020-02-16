@@ -246,6 +246,7 @@ class CustomController extends CI_Controller
         print_r(json_encode($aResult));
     }
 
+    // annthonite
     public function updateLogs() { 
         $table = 'logs';
         $data = array(
@@ -257,6 +258,7 @@ class CustomController extends CI_Controller
         return $this->Global_model->update_data($table, $data, $field, $where);
     }
 
+    // annthonite
     public function updateLogsRemarks() {
         $table = 'logs';
         $data = array(

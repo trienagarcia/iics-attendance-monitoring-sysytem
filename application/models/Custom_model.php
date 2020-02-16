@@ -72,7 +72,7 @@ date_default_timezone_set('Asia/Taipei');
 		LEFT JOIN attendance a ON a.attendance_id = log.attendance_id
 		 AND log.log_date < CURRENT_DATE
 		*/
-		 //annthonite, modified the select statement, add logs_id, attendance_id
+		 //annthonite
 		public function get_all_time_logs() {
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id");
 			$this->db->from("schedule");
