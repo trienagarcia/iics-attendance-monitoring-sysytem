@@ -22,7 +22,7 @@ class HomeController extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 
-		$this->checkSession();
+		//$this->checkSession();
 	}
 
 	function checkSession() {
