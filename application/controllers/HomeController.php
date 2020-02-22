@@ -79,6 +79,15 @@ class HomeController extends CI_Controller {
 		$this->load->view('layouts/template', $data);
 	}
 
+	public function addRequests()
+	{
+		$data['view'] =  "add-request";
+		$data['head'] = array(
+			"title"         =>  "Add Make Up Requests | Attendance Monitoring System",
+			);
+		$this->load->view('layouts/template', $data);
+	}
+
 	public function timeLogs()
 	{
 		$data['view'] =  "time-logs";
