@@ -1,0 +1,20 @@
+.announcement-description {
+	height: 160px!important;
+}
+
+.hidden {
+	display: none!important;
+}
+
+.announcement-text h5 {
+	color: black;
+	text-decoration: none;
+}
+
+.validate_error_message {
+	color: red;
+}
+
+.err_inputs {
+	border: 1px solid red;
+}
