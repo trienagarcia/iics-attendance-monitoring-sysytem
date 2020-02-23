@@ -72,7 +72,6 @@ date_default_timezone_set('Asia/Taipei');
 		LEFT JOIN attendance a ON a.attendance_id = log.attendance_id
 		 AND log.log_date < CURRENT_DATE
 		*/
-		 //annthonite
 		public function get_all_time_logs() {
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id");
 			$this->db->from("schedule");
@@ -164,6 +163,13 @@ date_default_timezone_set('Asia/Taipei');
 		// 	return $q->result();
 		// }
 
-		
+		public function get_schedules($day) {
+			$this->db->select("*");
+			$this->db->from("schedule");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->where("schedule.day = ", $day);
+			$q = $this->db->get();
+			return $q->result();
+		}
 
 	}

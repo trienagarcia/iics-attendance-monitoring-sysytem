@@ -33,24 +33,23 @@
 							</div>
 						</div>
 					</div>
-					<table id="table-compiled-reports" class="table table-hover dt-responsive" cellspacing="0" width="100%">
-						<thead>
-							<tr>
-								<th rowspan="2">HW Number</th>
-								<th rowspan="2">HW Class</th>
-								<th rowspan="2">HW Catalouging</th>
-								<th rowspan="2">HW Nature</th>
-								<th colspan="2">Remaining Quantity</th>
-								<th colspan="2">Quantity in Kg</th>
-							</tr>
-							<tr>
-								<th>Quantity</th>
-								<th>Unit</th>
-								<th>Quantity</th>
-								<th>Unit</th>
-							</tr>
-						</thead>
-					</table>
+					<table id="table-schedule" class="table table-hover dt-responsive" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Start Time</th>
+						<th>End Time</th>
+						<th>Room No.</th>
+				</thead>
+				<tfoot>
+					<tr>
+						<th>Date</th>
+						<th>Start Time</th>
+						<th>End Time</th>
+						<th>Room No.</th>
+					</tr>
+				</tfoot>
+			</table>
 
 				</div>
 			</div>
@@ -59,64 +58,59 @@
 
 
 		<script>
-			var reports;
-			var year;
-			var quarter;
-			$(document).ready(function() {
-				year = $('#year').val();
-				quarter  = $('#quarter').val();
-				$('#compiled-reports a').removeClass('nav-color');
-				$('#compiled-reports a').addClass('nav-active');
+			schedule = $("#table-schedule").DataTable({
+			ajax: {
+				url: "<?=base_url()?>ajax/get-schedules",
+				type: 'GET',
+				dataSrc: ''
+			},
+			responsive:true,
+			"order": [[ 0, "desc" ]],
+			columns: [
+				{ data: 'date' },
+				{ data: 'start_time' },
+				{ data: 'end_time' },
+				{ data: 'room_number' }
+				// ,
+				// { render: function ( data, type, row, meta ) {
+				// 		// var sRemarks = row['remarks'] === null ? '' : row['remarks'];
+				// 		// return `
+				// 		// 	<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
+				// 		// 	<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `' style="margin-top:5px">Edit Remarks</button>
+				// 		// `;
+    // 				}
+				// }
+			]
+		});
 
-				GetCompiledReports();
-				$(document).on('change', '#year', function() {
-					year = $(this).val();
-					reports.destroy();
-					GetCompiledReports();
+			function getFilteredSchedules(sch_date, interval) {
+				var sData = "sch_date=" + sch_date + "&interval=" + interval;
+				var sUrl = "<?=base_url()?>ajax/get-schedules?" + sData;
+				schedule.destroy();
+				schedule = $("#table-submitted-reports").DataTable({
+					ajax: {
+						url: sUrl,
+						type: 'GET',
+						dataSrc: ''
+					},
+					responsive:true,
+					"order": [[ 0, "desc" ]],
+					columns: [
+						{ data: 'date' },
+						{ data: 'start_time' },
+						{ data: 'end_time' },
+						{ data: 'room_number' }
+						// ,
+						// { render: function ( data, type, row, meta ) {
+						// 		// var sRemarks = row['remarks'] === null ? '' : row['remarks'];
+						// 		// return `
+						// 		// 	<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
+						// 		// 	<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `' style="margin-top:5px">Edit Remarks</button>
+						// 		// `;
+		    // 				}
+						// }
+					],
+					columnDefs: []
 				});
-
-				$(document).on('change', '#quarter', function() {
-					quarter = $(this).val();
-					reports.destroy();
-					GetCompiledReports();
-				});
-
-				$(document).on('click', '#btn-export', function() {
-					window.open('<?=base_url()?>compiled-reports/export/'+year+'/'+quarter, '_blank');
-				});
-			});
-
-			function GetCompiledReports() {
-		// reports = $("#table-compiled-reports").DataTable({
-		// 		ajax: {
-		// 			url: "<?=base_url()?>ajax/get-user-compiled-reports",
-		// 			type: 'POST',
-		// 			data: {
-		// 				year: year,
-		// 				quarter: quarter
-		// 			},
-		// 			dataSrc: ""
-		// 		},
-		// 		responsive:true,
-		// 		"order": [[ 4, "desc" ]],
-		// 		columns: [
-		// 		{ data: 'hw_number' },
-		// 		{ data: 'hw_class'},
-		// 		{ data: 'hw_catalogue' },
-		// 		{ data: 'hw_nature'},
-		// 		{ data: 'remain_waste'},
-		// 		{ data: null,
-		// 			render: function (data) {
-		// 					return "kg";
-		// 				} 
-		// 		},
-		// 		{ data: 'report_quantity'},
-		// 		{ data: null,
-		// 			render: function (data) {
-		// 					return "kg";
-		// 				} 
-		// 		},
-		// 		]
-		// });
-	}
+		}
 </script>

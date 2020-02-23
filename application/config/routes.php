@@ -111,8 +111,5 @@ $route['category/(:any)'] = 'homeController/homecategories/$1';
 $route['ajax/get-filter-time-logs'] = 'customController/getFilteredTimeLogs'; //annthonite
 $route['ajax/update-logs'] = 'customController/updateLogs'; //annthonite
 $route['ajax/update-logs-remarks'] = 'customController/updateLogsRemarks'; //annthonite
-// $route['custom/(:any)'] = 'customController/$1';
-// $route['accounts/(:any)'] = 'accountscontroller/$1';
-
-$route['ajax/get-schedules/(:any)'] = 'customController/getOpenSchedules/$1';
+$route['ajax/get-schedules'] = 'customController/getOpenSchedules';
 

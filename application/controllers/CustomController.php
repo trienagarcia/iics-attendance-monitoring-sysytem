@@ -1,4 +1,5 @@
 <?php
+require('Time.php');
 class CustomController extends CI_Controller
 {
 
@@ -243,6 +244,7 @@ class CustomController extends CI_Controller
     // annthonite
     public function getFilteredTimeLogs() {
         $aResult = $this->Custom_model->get_filtered_time_logs();
+        //print("<pre>".print_r($aResult,true)."</pre>");
         print_r(json_encode($aResult));
     }
 
@@ -267,5 +269,176 @@ class CustomController extends CI_Controller
         $field = 'logs_id';
         $where = $this->input->post('logs_id');
         return $this->Global_model->update_data($table, $data, $field, $where);
+    }
+
+    private function getUniqueRooms( $result ) {
+        $rooms = array();
+        foreach( $result as $room ) {
+            array_push($rooms, $room->room_number);
+        }
+
+        return array_unique( $rooms );
+    }
+
+    // JANG - 02/19/2020
+    public function getOpenSchedules() {
+
+        if (!empty($this->input->get('sch_date'))) {
+            $date = $this->input->get('sch_date');
+            $timestamp = strtotime($date);
+            $day = intval(date('w', $timestamp)) + 1;
+        }else{
+            $timestamp = strtotime(date("Y-m-d"));
+            $day = intval(date('w', $timestamp)) + 1;
+        }
+
+        if (!empty($this->input->get('interval'))) {
+            $interval = $this->input->get('interval');
+        }else{
+            $interval = "1";
+        }
+
+
+        $result = $this->Custom_model->get_schedules( $day );
+        $rooms = $this->getUniqueRooms($result);
+        $final_schedule = array();
+        
+        foreach( $rooms as $room ) {
+            // echo 'room: ' . $room . '<br>';
+            $schedules = array();
+            for($idx = 0; $idx < count($result)  ; $idx++) {
+
+                if( $room == $result[$idx]->room_number ) {
+                    $start_time = substr($result[$idx]->start_time, 0, -3);
+                    $end_time = substr($result[$idx]->end_time, 0, -3);
+
+                    if($start_time[0] == '0') {
+                        $start_time = substr( $start_time, 1 );
+                    }
+
+                    if($end_time[0] == '0') {
+                        $end_time = substr( $end_time, 1 );
+                    }
+
+                    $time = $start_time . '-' . $end_time;
+                    array_push($schedules, $time);
+                }
+                
+            }
+            // echo 'schedules<br>';
+            // print("<pre>".print_r($schedules,true)."</pre>");
+
+            $open_schedules = $this->computeOpenSchedules( $schedules, $room );
+            $final_schedule = array_merge($final_schedule, $open_schedules);
+        }
+        $final_schedule =  (array)$this->convertToObject($final_schedule);
+        // print("<pre>".print_r($final_schedule,true)."</pre>");
+
+        print_r(json_encode($final_schedule));
+    }
+
+   function convertToObject($array) {
+        $object = new stdClass();
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = $this->convertToObject($value);
+            }
+            $object->$key = $value;
+        }
+        return $object;
+}
+
+    // $list = ['8:30-9:30', '10:00-13:00', '14:30-16:00', '16:30-21:00'];
+    private function computeOpenSchedules($list, $room) {
+
+        // print_array($list, 'input');
+        // echo '<br>';
+
+        $st = array();
+        $et = array();
+        $final = array();
+        $start = 7;
+        $end = 21;
+        $temp  = $start;
+
+        while($temp < $end) {
+            array_push( $st, number_format((float)$temp, 2, ':', '') );
+            $temp++;
+        }
+
+        $temp = $start++;
+        while( $start <= $end ) {
+            array_push( $et, number_format((float)$start, 2, ':', '') );
+            $start++;
+        }
+
+        // print_array($st, 'start_time');
+        // print_array($et, 'end_time');
+        // echo '<br>';
+
+        foreach( $list as $val ) {
+            $times = explode("-", $val);
+            $start_time = trim($times[0]);
+            $end_time = trim($times[1]);
+
+            // echo 'start time: ' . $start_time . '<br>';
+            // echo 'end_time: ' . $end_time . '<br>';
+            $range = $this->find_range($start_time, $end_time);
+            
+            if (($key = array_search($start_time, $st)) !== false) {
+                unset($st[$key]);
+            }
+
+            if (($key = array_search($end_time, $et)) !== false) {
+                unset($et[$key]);
+            }
+
+            foreach($range as $time) {
+                if (($key = array_search($time, $st)) !== false) {
+                    unset($st[$key]);
+                }
+
+                if (($key = array_search($time, $et)) !== false) {
+                    unset($et[$key]);
+                }
+            }
+        }
+
+        $st = array_values($st);
+        $et = array_values($et);
+
+        // $this->print_array($st, 'start_time');
+        // $this->print_array($et, 'end_time');
+        // echo '<br>';
+
+        if(count($st) >= count($et)) {
+            for($idx = 0; $idx < count($st); $idx++){
+                array_push($final, array('start_time' => $st[$idx], 'end_time' => $et[$idx], 'room' => $room));
+            }
+        }        
+        return $final;
+    }
+
+    private function find_range($time1, $time2) {
+      $time1 = floatval(str_replace(':', '.', $time1));
+      $time2 = floatval(str_replace(':', '.', $time2));
+      $range = array();
+
+        $time1++;
+
+        while($time1 < $time2){
+            array_push($range, number_format((float)$time1, 2, ':', ''));
+            $time1++;
+        }
+
+        return $range;
+    }
+
+    private function print_array($arrray, $msg) {
+        echo $msg . "<br>";
+        foreach( $arrray as $val ) {
+            echo $val . ',&nbsp;';
+        }
+        echo '<br>';
     }
 }
