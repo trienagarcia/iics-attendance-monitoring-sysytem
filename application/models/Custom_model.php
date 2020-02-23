@@ -172,4 +172,17 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		//annthonite
+		public function get_makeup_requests()
+		{
+			$this->db->select("requests.request_date, requests.time_from, requests.time_to, rooms.room_number");
+			$this->db->from("requests");
+			$this->db->join("rooms", "rooms.room_id = requests.room_id");
+			$this->db->join("person", "person.person_id = requests.person_id");
+			$this->db->where("requests.status_id = ", 2);
+			$this->db->where("person.person_id = ", $this->session->userdata('person_id'));
+			$q = $this->db->get();
+			return $q->result();
+		}
+
 	}
