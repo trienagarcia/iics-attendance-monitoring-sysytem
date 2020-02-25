@@ -441,11 +441,4 @@ class CustomController extends CI_Controller
         }
         echo '<br>';
     }
-
-    //annthonite
-    public function getMakeUpRequests ()
-    {
-        $aResult = $this->Custom_model->get_makeup_requests();
-        print_r(json_encode($aResult));
-    }
 }
