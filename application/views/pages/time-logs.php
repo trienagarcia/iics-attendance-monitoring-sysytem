@@ -86,7 +86,7 @@
 				<div class="modal-footer">
 					<!-- button -->
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-info" id="updateLogs" data-dismiss="modal">Save</button>
+					<button type="button" class="btn btn-info" id="updateLogs">Save</button>
 				</div>
 			</div>
 		</div>
@@ -227,6 +227,7 @@
 		$(document).on('click', '#btnUpdateAttendance', function (event) {
 			var modal = $('#dynamicModal');
 			var sBody = `
+			<form id="editAttendanceForm">
 				<input name="logsid" id="logsid" value="" hidden />		
 				<div class="form-check">
 					<input class="form-check-input" type="radio" name="attendance" id="radioPresent" value="1">
@@ -242,14 +243,14 @@
 				</div><br />
 				<div class="form-group">
 					<label for="textareaRemarks">Remarks</label>
-					<textarea class="form-control" id="textareaRemarks" rows="3" maxlength="150" style="resize: none"></textarea>
+					<textarea class="form-control" id="textareaRemarks" rows="3" maxlength="150" style="resize: none" required></textarea>
 					<small id="textareaRemarksCounter" class="text-muted pull-right"></small>
 				</div>
+			</form>
 			`;
 			var bPresent = $(this).attr('attendanceval') === `1` ? true : false;
 			var bAbsent = $(this).attr('attendanceval') === `2` ? true : false;
 			var iLogID = $(this).attr('logsidval');
-			var sRemarks = $(this).attr('remarksval');
 
 			modal.find('.modal-title').text('Edit Attendance');
 			modal.find('.modal-body').html(sBody);
@@ -258,7 +259,6 @@
 			$('#radioPresent').attr('checked', bPresent);
 			$('#radioAbsent').attr('checked', bAbsent);
 			$('#logsid').val(iLogID);
-			$('#textareaRemarks').val(sRemarks);
 			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
 		});
 
@@ -274,14 +274,12 @@
 				</div>
 			`;
 			var iLogID = $(this).attr('logsidval');
-			var sRemarks = $(this).attr('remarksval');
 
 			modal.find('.modal-title').text('Edit Remarks');
 			modal.find('.modal-body').html(sBody);
 			modal.modal('show');
 		
 			$('#logsid').val(iLogID);
-			$('#textareaRemarks').val(sRemarks);
 			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
 		});
 
@@ -293,7 +291,6 @@
 
 		// annthonite
 		$(document).on('click', '#updateLogs', function () {
-			console.log($('#logsid').val());
 			if ($('input[name=attendance]').length > 0) {
 				var sUrl = '<?=base_url()?>ajax/update-logs';
 				var oData = {
@@ -309,21 +306,37 @@
 				};
 			}
 
-			// annthonite
-			$.ajax({
-                url     : sUrl,
-                type    : 'POST',
-                data    : oData,
-                success : function(data) {
-					alert('Successfully updated');
-				},
-				error   : function (data) {
-					alert('Error Occured');
-				}
-			});
-			
+			var bValidate = validateUpdateLogs(oData);
+
+			if (bValidate === true) {
+				// annthonite
+				$.ajax({
+					url     : sUrl,
+					type    : 'POST',
+					data    : oData,
+					success : function(data) {
+						alert('Successfully updated');
+					},
+					error   : function (data) {
+						alert('Error Occured');
+					}
+				});
+
+				$('#dynamicModal').modal('hide');
+			}
+
 			logs.ajax.reload();
 		});
+
+		//annthonite
+		function validateUpdateLogs (oData) {
+			if (oData['remarks'] === "") {
+				$('#textareaRemarks').addClass("is-invalid");
+				return false;
+			}
+			$('#textareaRemarks').removeClass('is-invalid');
+			return true;
+		}
 	});
 
 	
