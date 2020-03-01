@@ -244,7 +244,7 @@ class CustomController extends CI_Controller
     // annthonite
     public function getFilteredTimeLogs() {
         $aResult = $this->Custom_model->get_filtered_time_logs();
-        //print("<pre>".print_r($aResult,true)."</pre>");
+        // print("<pre>".print_r($aResult,true)."</pre>");
         print_r(json_encode($aResult));
     }
 
@@ -288,7 +288,7 @@ class CustomController extends CI_Controller
             $timestamp = strtotime($date);
             $day = intval(date('w', $timestamp)) + 1;
         }else{
-            $timestamp = strtotime(date("Y-m-d"));
+            $timestamp = strtotime(date("Y-m-d", strtotime('tomorrow')));
             $day = intval(date('w', $timestamp)) + 1;
         }
 
@@ -332,6 +332,8 @@ class CustomController extends CI_Controller
             $final_schedule = array_merge($final_schedule, $open_schedules);
         }
         $final_schedule =  (array)$this->convertToObject($final_schedule);
+        $final_schedule = array_values($final_schedule);
+
         // print("<pre>".print_r($final_schedule,true)."</pre>");
 
         print_r(json_encode($final_schedule));
