@@ -13,10 +13,9 @@
 					<input class="form-control" id="inputDate" name="inputDate" readonly>
 				</div>
 				<div class="col col-2">
-					<div class="label-input">Time</div>
+					<div class="label-input">Interval</div>
 					<select class="form-control" id="inputTime" name="inputTime">
-						<option value="" selected disabled></option>
-						<option value="1">1 hour</option>
+						<option value="1" selected>1 hour</option>
 						<option value="1.5">1 hour 30 minutes</option>
 						<option value="2">2 hours</option>
 						<option value="2.5">2 hours 30 minutes</option>
@@ -29,14 +28,14 @@
 			<table id="table-schedule" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<!-- <th>Date</th> -->
+						<th>Date</th>
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Room No.</th>
 				</thead>
 				<tfoot>
 					<tr>
-						<!-- <th>Date</th> -->
+						<th>Date</th>
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Room No.</th>
@@ -51,7 +50,7 @@
 		<script>
 			// annthonite
 			$('#inputDate').datepicker({
-				minDate: new Date(),
+				minDate: moment().add('d', 1).toDate(),
 				dateFormat: 'yy-mm-dd',
 				changeMonth: true,
 				changeYear: true,
@@ -64,6 +63,11 @@
 			$('#inputTime').change(function(){
 				getFilteredSchedules($('#inputDate').val(), $(this).val());
 			});
+
+			// function getDefaultDate() {
+			// 	var sDate = new Date();
+			// 	return sDate.setDate(sDate.getDate() + 1);
+			// }
 			
 			//annthonite modified
 			schedule = $("#table-schedule").DataTable({
@@ -75,7 +79,7 @@
 				responsive:true,
 				"order": [[ 0, "desc" ]],
 				columns: [
-					// { data: 'date'},
+					{ data: 'date'},
 					{ data: 'start_time' },
 					{ data: 'end_time' },
 					{ data: 'room' }
@@ -99,7 +103,7 @@
 					responsive : true,
 					"order"    : [[ 0, "desc" ]],
 					columns: [
-						// { data: 'date'},
+						{ data: 'date'},
 						{ data : 'start_time' },
 						{ data : 'end_time' },
 						{ data : 'room' }

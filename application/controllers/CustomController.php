@@ -303,6 +303,7 @@ class CustomController extends CI_Controller
         $rooms = $this->getUniqueRooms($result);
         $final_schedule = array();
         
+        $i = 0;
         foreach( $rooms as $room ) {
             // echo 'room: ' . $room . '<br>';
             $schedules = array();
@@ -323,20 +324,27 @@ class CustomController extends CI_Controller
                     $time = $start_time . '-' . $end_time;
                     array_push($schedules, $time);
                 }
-                
+
             }
             // echo 'schedules<br>';
             // print("<pre>".print_r($schedules,true)."</pre>");
 
             $open_schedules = $this->computeOpenSchedules( $schedules, $room );
             $final_schedule = array_merge($final_schedule, $open_schedules);
+            // $final_schedule[$i]['date'] = date("Y-m-d", $timestamp);
         }
         $final_schedule =  (array)$this->convertToObject($final_schedule);
         $final_schedule = array_values($final_schedule);
 
-        // print("<pre>".print_r($final_schedule,true)."</pre>");
+        // annthonite
+        foreach ($final_schedule as $row) {
+            $row->date = date("Y-m-d", $timestamp);
+        }
 
         print_r(json_encode($final_schedule));
+        // print("<pre>".print_r($final_schedule,true)."</pre>");
+
+        // print_r(json_encode($final_schedule));
     }
 
    function convertToObject($array) {
