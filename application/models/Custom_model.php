@@ -172,4 +172,16 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		// annthonite
+		public function getRequests() {
+			$this->db->select("*");
+			$this->db->from("requests");
+			$this->db->join("rooms", "requests.room_id = rooms.room_id");
+			$this->db->join("sections", "requests.section_id = sections.section_id");
+			$this->db->join("course", "requests.course_id = course.course_id");
+			$this->db->join("status", "requests.status_id = status.status_id");
+			$this->db->join("person", "requests.person_id = person.person_id");
+			$q = $this->db->get();
+			return $q->result();
+		}
 	}

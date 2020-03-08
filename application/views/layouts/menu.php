@@ -48,7 +48,7 @@
 					<a class="nav-link nav-color" href="#">Schedule</a>
 				</li>
 				<li id="submitted-reports" class="nav-item">
-					<a class="nav-link nav-color" href="#">Request</a>
+					<a class="nav-link nav-color" href="<?=base_url()?>view-request">View Request</a>
 				</li>
 				<li id="submitted-reports" class="nav-item">
 					<a class="nav-link nav-color" href="#">Substitute</a>

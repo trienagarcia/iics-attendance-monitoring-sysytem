@@ -66,6 +66,8 @@ $route['account-management'] = 'homeController/accountmanagement';
 $route['insert'] = 'homeController/insert';
 $route['reject-reason'] = 'homeController/rejectreason';
 
+$route['view-request'] = 'homeController/viewRequest'; //annthonite
+
 // Third party controller
 $route['thirdpartycontroller'] = 'thirdPartyController';
 $route['individualreportcontroller'] = 'individualreportcontroller';
@@ -112,3 +114,5 @@ $route['ajax/get-filter-time-logs'] = 'customController/getFilteredTimeLogs'; //
 $route['ajax/update-logs'] = 'customController/updateLogs'; //annthonite
 $route['ajax/update-logs-remarks'] = 'customController/updateLogsRemarks'; //annthonite
 $route['ajax/get-schedules'] = 'customController/getOpenSchedules';
+$route['ajax/get-requests'] = 'customController/getRequests'; //annthonite
+$route['ajax/update-request-status'] = 'customController/updateRequestStatus'; //annthonite

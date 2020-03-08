@@ -457,4 +457,21 @@ class CustomController extends CI_Controller
         }
         echo '<br>';
     }
+
+    // annthonite
+    public function getRequests() {
+        $result = $this->Custom_model->getRequests();
+        print_r(json_encode($result));
+    }
+
+    // annthonite
+    public function updateRequestStatus() {
+        $table = 'requests';
+        $data = array(
+            'status_id' => $this->input->post('status_id')
+        );
+        $field = 'request_id';
+        $where = $this->input->post('request_id');
+        return $this->Global_model->update_data($table, $data, $field, $where);
+    }
 }
