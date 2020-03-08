@@ -129,8 +129,9 @@
 					"order"    : [[ 0, "desc" ]],
 					columns: [
 						// { data: 'date'},
-						{ data : 'start_time' },
-						{ data : 'end_time' },
+						{ data: 'start_time' },
+						{ data: 'end_time' },
+						{ data: 'room' },
 						{ data: null }
 				],
 				columnDefs: [
