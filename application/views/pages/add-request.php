@@ -5,8 +5,8 @@
 		</div>
 		<div class="section-body">
 			<div class="row align-items-center pb-3">
-				<input type="hidden" name="hw_report_id" value=<?php echo $this->session->flashdata('hw_report_id') ? 
-				$this->session->flashdata('hw_report_id') : '' ?> />
+<!-- 				<input type="hidden" name="hw_report_id" value=<?php// echo $this->session->flashdata('hw_report_id') ? 
+			//	$this->session->flashdata('hw_report_id') : '' ?> /> -->
 				<!-- annthonite modified -->
 				<div class="col col-2 offset-8">
 					<div class="label-input">Date</div>
@@ -32,6 +32,7 @@
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Room No.</th>
+						<th>Action</th>
 				</thead>
 				<tfoot>
 					<tr>
@@ -39,6 +40,7 @@
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Room No.</th>
+						<th>Action</th>
 					</tr>
 				</tfoot>
 			</table>
@@ -82,14 +84,41 @@
 					{ data: 'date'},
 					{ data: 'start_time' },
 					{ data: 'end_time' },
-					{ data: 'room' }
-				]
+					{ data: 'room' },
+					{ data: null }
+				],
+				columnDefs: [
+					{
+						"targets": 3,
+						"data": 'schedule_id',
+						"render": function ( data, type, row ) {
+							var html = "";
+							html += `<div class='modal fade' id='modalContactForm` + data.schedule_id + `' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+		                        <form method='post' name='reject_form' action='reject-reason'>
+		                           <div class='modal-dialog' role='document'>
+		                              <div class='modal-content'>
+		                                 <div class='modal-header text-center'>
+		                                    <h4 class='modal-title w-100 font-weight-bold'>Reject Report Number ` + data.schedule_id + `</h4>
+		                                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+		                                 </div>
+		                                 <div class='modal-body mx-3'>
+		                                    <div class='md-form'><i class='fas fa-pencil prefix grey-text'></i><label data-error='wrong' data-success='right' for='form8'>Please specify a reason: </label><br><textarea id='reason_text' name='reason_text' class='md-textarea form-control' rows='4' required='true'></textarea><input type='hidden' name='hw_report_id' id='hw_report_id' value='`+ data.schedule_id +`' /></div>
+		                                 	</div>
+		                                 <div class='modal-footer d-flex justify-content-center'><input type='submit' class='btn btn-success' value='Submit'/></div>
+		                              </div>
+		                           </div>
+		                        </form>
+		                     </div>`;
+
+		                     html +=  `<button class='btn btn-danger btn-sm btn-primary' data-id='` + data.schedule_id + `' data-toggle='modal' data-target='#modalContactForm` + data.schedule_id + `'>Request</button>`;
+							return html;
+						}
+					}
+					]
 
 			});
 
-
-
-
+			// Need to fix
 			function getFilteredSchedules(sch_date, interval) {
 				var sData = "sch_date=" + sch_date + "&interval=" + interval;
 				var sUrl = "<?=base_url()?>ajax/get-schedules?" + sData;
@@ -106,7 +135,35 @@
 						{ data: 'date'},
 						{ data : 'start_time' },
 						{ data : 'end_time' },
-						{ data : 'room' }
+						{ data: null }
+				],
+				columnDefs: [
+					{
+						"targets": 3,
+						"data": 'schedule_id',
+						"render": function ( data, type, row ) {
+							var html = "";
+							html += `<div class='modal fade' id='modalContactForm` + data.schedule_id + `' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+		                        <form method='post' name='reject_form' action='reject-reason'>
+		                           <div class='modal-dialog' role='document'>
+		                              <div class='modal-content'>
+		                                 <div class='modal-header text-center'>
+		                                    <h4 class='modal-title w-100 font-weight-bold'>Reject Report Number ` + data.schedule_id + `</h4>
+		                                    <button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+		                                 </div>
+		                                 <div class='modal-body mx-3'>
+		                                    <div class='md-form'><i class='fas fa-pencil prefix grey-text'></i><label data-error='wrong' data-success='right' for='form8'>Please specify a reason: </label><br><textarea id='reason_text' name='reason_text' class='md-textarea form-control' rows='4' required='true'></textarea><input type='hidden' name='hw_report_id' id='hw_report_id' value='`+ data.schedule_id +`' /></div>
+		                                 	</div>
+		                                 <div class='modal-footer d-flex justify-content-center'><input type='submit' class='btn btn-success' value='Submit'/></div>
+		                              </div>
+		                           </div>
+		                        </form>
+		                     </div>`;
+
+		                     html +=  `<button class='btn btn-danger btn-sm btn-primary' data-id='` + data.schedule_id + `' data-toggle='modal' data-target='#modalContactForm` + data.schedule_id + `'>Request</button>`;
+							return html;
+						}
+					}
 					]
 				});
 			}

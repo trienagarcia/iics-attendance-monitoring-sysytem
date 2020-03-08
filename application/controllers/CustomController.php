@@ -334,6 +334,12 @@ class CustomController extends CI_Controller
             // $final_schedule[$i]['date'] = date("Y-m-d", $timestamp);
         }
         $final_schedule =  (array)$this->convertToObject($final_schedule);
+        
+        $ctr = 1;
+        foreach( $final_schedule as $schedule ) {
+            $schedule->schedule_id = $ctr++;
+        }
+
         $final_schedule = array_values($final_schedule);
 
         // annthonite
