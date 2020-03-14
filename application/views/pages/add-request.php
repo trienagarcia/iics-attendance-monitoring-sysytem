@@ -129,8 +129,13 @@
 					"order"    : [[ 0, "desc" ]],
 					columns: [
 						// { data: 'date'},
+<<<<<<< HEAD
 						{ data : 'start_time' },
 						{ data : 'end_time' },
+=======
+						{ data: 'start_time' },
+						{ data: 'end_time' },
+>>>>>>> annthonite_branch
 						{ data: 'room' },
 						{ data: null }
 				],
