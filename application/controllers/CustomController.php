@@ -271,6 +271,11 @@ class CustomController extends CI_Controller
         return $this->Global_model->update_data($table, $data, $field, $where);
     }
 
+    private function getAllApprovedSchedules() {
+        $result = $this->Custom_model->get_all_approved_schedules();
+        print_r(json_encode($result));
+    }
+
     private function getUniqueRooms( $result ) {
         $rooms = array();
         foreach( $result as $room ) {
@@ -362,7 +367,23 @@ class CustomController extends CI_Controller
             $object->$key = $value;
         }
         return $object;
-}
+    }
+
+    // 3-12-2020
+    private function orderByInterval( $sched ) {
+       // ['7:00-8:00']
+        $all_schedules = array();
+        foreach( $sched as $value ) {
+            $times = explode("-", $value);
+            $start_time = trim($times[0]);
+            $end_time = trim($times[1]);
+            $time1 = floatval(str_replace(':', '.', $time1));
+            $time2 = floatval(str_replace(':', '.', $time2));
+
+
+        }
+    }
+    // 3-12-2020
 
     // $list = ['8:30-9:30', '10:00-13:00', '14:30-16:00', '16:30-21:00'];
     private function computeOpenSchedules($list, $room) {
@@ -377,19 +398,23 @@ class CustomController extends CI_Controller
         $end = 21;
         $temp  = $start;
 
-        while($temp < $end) {
-            array_push( $st, number_format((float)$temp, 2, ':', '') );
-            $temp++;
-        }
+        $st = ['7:00', '7:30', '8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'];
+        $et = ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
+        // while($temp < $end) {
+        //     array_push( $st, number_format((float)$temp, 2, ':', '') );
+        //     $temp++;
+        // }
 
-        $temp = $start++;
-        while( $start <= $end ) {
-            array_push( $et, number_format((float)$start, 2, ':', '') );
-            $start++;
-        }
+        // $temp = $start++;
+        // while( $start <= $end ) {
+        //     array_push( $et, number_format((float)$start, 2, ':', '') );
+        //     $start++;
+        // }
 
-        // print_array($st, 'start_time');
-        // print_array($et, 'end_time');
+        // $this->print_array($st, 'start_time');
+        // $this->print_array($et, 'end_time');
         // echo '<br>';
 
         foreach( $list as $val ) {

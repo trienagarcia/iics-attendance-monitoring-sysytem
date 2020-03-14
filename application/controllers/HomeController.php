@@ -107,6 +107,15 @@ class HomeController extends CI_Controller {
 		$this->load->view('layouts/template', $data);
 	}
 
+	public function substituteProfessor()
+	{
+		$data['view'] = 'substitute';
+		$data['head'] = array(
+			"title"         =>  "Substitute Professor | Attendance Monitoring System",
+			);
+		$this->load->view('layouts/template', $data);
+	}
+
 	public function changePassword()
 	{
 		$data['view'] =  'change-password';

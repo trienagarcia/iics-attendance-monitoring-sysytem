@@ -184,4 +184,16 @@ date_default_timezone_set('Asia/Taipei');
 			$q = $this->db->get();
 			return $q->result();
 		}
+
+		public function get_all_approved_schedules() {
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id", "left");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id", "left");
+			$this->db->join("course", "course.course_id = schedule.course_id", "left");
+			$this->db->join("sections", "sections.section_id = schedule.section_id", "left");
+			// ADD and date
+			$q = $this->db->get();
+			return $q->result();
+		}
 	}

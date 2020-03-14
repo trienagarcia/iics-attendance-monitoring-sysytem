@@ -61,6 +61,7 @@ $route['time-logs-user'] = 'homeController/timelogsuser';
 $route['compiled-reports'] = 'homeController/compiledreports';
 $route['report/(:any)'] = 'homeController/getspecificreport/$1';
 $route['add-request'] = 'homeController/addRequests';
+$route['substitute'] = 'homeController/substituteProfessor';
 
 $route['account-management'] = 'homeController/accountmanagement';
 $route['insert'] = 'homeController/insert';
@@ -116,3 +117,4 @@ $route['ajax/update-logs-remarks'] = 'customController/updateLogsRemarks'; //ann
 $route['ajax/get-schedules'] = 'customController/getOpenSchedules';
 $route['ajax/get-requests'] = 'customController/getRequests'; //annthonite
 $route['ajax/update-request-status'] = 'customController/updateRequestStatus'; //annthonite
+$route['ajax/get-all-approved-schedules'] = 'customController/getAllApprovedSchedules';
