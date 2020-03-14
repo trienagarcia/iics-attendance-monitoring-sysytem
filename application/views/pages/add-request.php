@@ -131,6 +131,7 @@
 						// { data: 'date'},
 						{ data : 'start_time' },
 						{ data : 'end_time' },
+						{ data: 'room' },
 						{ data: null }
 				],
 				columnDefs: [
