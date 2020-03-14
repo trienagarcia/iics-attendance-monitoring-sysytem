@@ -172,4 +172,28 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		// annthonite
+		public function getRequests() {
+			$this->db->select("*");
+			$this->db->from("requests");
+			$this->db->join("rooms", "requests.room_id = rooms.room_id");
+			$this->db->join("sections", "requests.section_id = sections.section_id");
+			$this->db->join("course", "requests.course_id = course.course_id");
+			$this->db->join("status", "requests.status_id = status.status_id");
+			$this->db->join("person", "requests.person_id = person.person_id");
+			$q = $this->db->get();
+			return $q->result();
+		}
+
+		public function get_all_approved_schedules() {
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id", "left");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id", "left");
+			$this->db->join("course", "course.course_id = schedule.course_id", "left");
+			$this->db->join("sections", "sections.section_id = schedule.section_id", "left");
+			// ADD and date
+			$q = $this->db->get();
+			return $q->result();
+		}
 	}

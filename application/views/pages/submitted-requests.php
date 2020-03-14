@@ -13,12 +13,14 @@
 					echo "alert(" . $this->session->flashdata('server_errors') . ");";
 				endif;
 			?>
-			<div class="row">
+			<!-- start annthonite -->
+			<!-- <div class="row">
 				<div class="col-md-4">
 					<button type="button" class="btn btn-primary btn-add-chem-waste my-3" id="btn-add-request">+ Add Request</button>
 				</div>
 				
-			</div>
+			</div> -->
+			<!-- end annthonite -->
 
 			<table id="table-submitted-requests" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
@@ -153,7 +155,8 @@
 						"data": 'request_id',
 						"render": function ( data, type, row ) {
 							var html = "";
-							html += "<button class='btn btn-primary btn-sm btn-edit-request' data-id='"+data.request_id+"'>&nbsp;&nbsp;Edit&nbsp;&nbsp;</button> ";
+							// annthonite
+							// html += "<button class='btn btn-primary btn-sm btn-edit-request' data-id='"+data.request_id+"'>&nbsp;&nbsp;Edit&nbsp;&nbsp;</button> ";
 							html += "<button class='btn btn-danger btn-sm btn-cancel' data-id='"+data.hw_report_id+"'>Cancel</button>";
 							return html;
 						} 

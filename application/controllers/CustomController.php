@@ -271,6 +271,11 @@ class CustomController extends CI_Controller
         return $this->Global_model->update_data($table, $data, $field, $where);
     }
 
+    private function getAllApprovedSchedules() {
+        $result = $this->Custom_model->get_all_approved_schedules();
+        print_r(json_encode($result));
+    }
+
     private function getUniqueRooms( $result ) {
         $rooms = array();
         foreach( $result as $room ) {
@@ -303,6 +308,7 @@ class CustomController extends CI_Controller
         $rooms = $this->getUniqueRooms($result);
         $final_schedule = array();
         
+        $i = 0;
         foreach( $rooms as $room ) {
             // echo 'room: ' . $room . '<br>';
             $schedules = array();
@@ -323,13 +329,14 @@ class CustomController extends CI_Controller
                     $time = $start_time . '-' . $end_time;
                     array_push($schedules, $time);
                 }
-                
+
             }
             // echo 'schedules<br>';
             // print("<pre>".print_r($schedules,true)."</pre>");
 
             $open_schedules = $this->computeOpenSchedules( $schedules, $room );
             $final_schedule = array_merge($final_schedule, $open_schedules);
+            // $final_schedule[$i]['date'] = date("Y-m-d", $timestamp);
         }
         $final_schedule =  (array)$this->convertToObject($final_schedule);
         
@@ -340,9 +347,15 @@ class CustomController extends CI_Controller
 
         $final_schedule = array_values($final_schedule);
 
-        // print("<pre>".print_r($final_schedule,true)."</pre>");
+        // annthonite
+        foreach ($final_schedule as $row) {
+            $row->date = date("Y-m-d", $timestamp);
+        }
 
         print_r(json_encode($final_schedule));
+        // print("<pre>".print_r($final_schedule,true)."</pre>");
+
+        // print_r(json_encode($final_schedule));
     }
 
    function convertToObject($array) {
@@ -354,7 +367,23 @@ class CustomController extends CI_Controller
             $object->$key = $value;
         }
         return $object;
-}
+    }
+
+    // 3-12-2020
+    private function orderByInterval( $sched ) {
+       // ['7:00-8:00']
+        $all_schedules = array();
+        foreach( $sched as $value ) {
+            $times = explode("-", $value);
+            $start_time = trim($times[0]);
+            $end_time = trim($times[1]);
+            $time1 = floatval(str_replace(':', '.', $time1));
+            $time2 = floatval(str_replace(':', '.', $time2));
+
+
+        }
+    }
+    // 3-12-2020
 
     // $list = ['8:30-9:30', '10:00-13:00', '14:30-16:00', '16:30-21:00'];
     private function computeOpenSchedules($list, $room) {
@@ -369,19 +398,23 @@ class CustomController extends CI_Controller
         $end = 21;
         $temp  = $start;
 
-        while($temp < $end) {
-            array_push( $st, number_format((float)$temp, 2, ':', '') );
-            $temp++;
-        }
+        $st = ['7:00', '7:30', '8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'];
+        $et = ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
+        // while($temp < $end) {
+        //     array_push( $st, number_format((float)$temp, 2, ':', '') );
+        //     $temp++;
+        // }
 
-        $temp = $start++;
-        while( $start <= $end ) {
-            array_push( $et, number_format((float)$start, 2, ':', '') );
-            $start++;
-        }
+        // $temp = $start++;
+        // while( $start <= $end ) {
+        //     array_push( $et, number_format((float)$start, 2, ':', '') );
+        //     $start++;
+        // }
 
-        // print_array($st, 'start_time');
-        // print_array($et, 'end_time');
+        // $this->print_array($st, 'start_time');
+        // $this->print_array($et, 'end_time');
         // echo '<br>';
 
         foreach( $list as $val ) {
@@ -448,5 +481,22 @@ class CustomController extends CI_Controller
             echo $val . ',&nbsp;';
         }
         echo '<br>';
+    }
+
+    // annthonite
+    public function getRequests() {
+        $result = $this->Custom_model->getRequests();
+        print_r(json_encode($result));
+    }
+
+    // annthonite
+    public function updateRequestStatus() {
+        $table = 'requests';
+        $data = array(
+            'status_id' => $this->input->post('status_id')
+        );
+        $field = 'request_id';
+        $where = $this->input->post('request_id');
+        return $this->Global_model->update_data($table, $data, $field, $where);
     }
 }

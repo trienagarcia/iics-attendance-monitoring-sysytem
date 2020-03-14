@@ -107,6 +107,15 @@ class HomeController extends CI_Controller {
 		$this->load->view('layouts/template', $data);
 	}
 
+	public function substituteProfessor()
+	{
+		$data['view'] = 'substitute';
+		$data['head'] = array(
+			"title"         =>  "Substitute Professor | Attendance Monitoring System",
+			);
+		$this->load->view('layouts/template', $data);
+	}
+
 	public function changePassword()
 	{
 		$data['view'] =  'change-password';
@@ -130,5 +139,13 @@ class HomeController extends CI_Controller {
 		header('Location: '.base_url());
 	}
 
-
+	public function viewRequest()
+	{
+		$data['view'] =  "view-request";
+		$data['head'] = array(
+			"title" =>  "View Request | Attendance Monitoring System",
+		);
+		// $data['faculty'] = json_decode(json_encode($this->Custom_model->get_all_users()), true);
+		$this->load->view('layouts/template', $data);
+	}
 }
