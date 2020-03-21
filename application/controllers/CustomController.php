@@ -276,13 +276,36 @@ class CustomController extends CI_Controller
         print_r(json_encode($result));
     }
 
+    // 03-21-2020 - S
+    private function removeDuplicates( $rooms ) {
+        $final_rooms = array();
+        foreach($rooms as $room) {
+            $isAlreadyExistingFlag = FALSE;
+            foreach($final_rooms as $final_room) {
+                if($final_room["room_id"] == $room["room_id"]){
+                    $isAlreadyExistingFlag = TRUE;
+                    break;
+                }
+            }
+
+            if($isAlreadyExistingFlag) {
+                continue;
+            }
+
+            array_push($final_rooms, $room);
+        }
+
+        return $final_rooms;
+    } 
+    // 03-21-2020 - E
+
     private function getUniqueRooms( $result ) {
         $rooms = array();
         foreach( $result as $room ) {
-            array_push($rooms, $room->room_number);
+            array_push($rooms, ["room_id" => $room->room_id, "room_number" => $room->room_number]);
         }
 
-        return array_unique( $rooms );
+        return $this->removeDuplicates( $rooms );
     }
 
     // JANG - 02/19/2020
@@ -297,24 +320,26 @@ class CustomController extends CI_Controller
             $day = intval(date('w', $timestamp)) + 1;
         }
 
-        if (!empty($this->input->get('interval'))) {
-            $interval = $this->input->get('interval');
-        }else{
-            $interval = "1";
-        }
+        $interval = $this->input->get('interval');
 
+        if(empty($interval)) {
+            $interval = 1;
+        }
 
         $result = $this->Custom_model->get_schedules( $day );
         $rooms = $this->getUniqueRooms($result);
+
+        // print("<pre>".print_r($rooms,true)."</pre>");
         $final_schedule = array();
         
         $i = 0;
         foreach( $rooms as $room ) {
-            // echo 'room: ' . $room . '<br>';
             $schedules = array();
             for($idx = 0; $idx < count($result)  ; $idx++) {
-
-                if( $room == $result[$idx]->room_number ) {
+                // echo 'room number: ' . $room["room_number"] . '<br>';
+                // echo '$result[$idx]->room_number: ' . $result[$idx]->room_number . "<br>";
+                // echo '$room["room_number"] == $result[$idx]->room_number? ' . ($room["room_number"] == $result[$idx]->room_number) . '<br>';
+                if( $room["room_number"] == $result[$idx]->room_number ) {
                     $start_time = substr($result[$idx]->start_time, 0, -3);
                     $end_time = substr($result[$idx]->end_time, 0, -3);
 
@@ -339,24 +364,41 @@ class CustomController extends CI_Controller
             // $final_schedule[$i]['date'] = date("Y-m-d", $timestamp);
         }
         $final_schedule =  (array)$this->convertToObject($final_schedule);
-        
+        $super_final_schedule = array_values($this->incorporateIntervals($final_schedule, $rooms, $interval));
+
         $ctr = 1;
-        foreach( $final_schedule as $schedule ) {
-            $schedule->schedule_id = $ctr++;
-        }
-
-        $final_schedule = array_values($final_schedule);
-
         // annthonite
-        foreach ($final_schedule as $row) {
+        foreach ($super_final_schedule as $row) {
             $row->date = date("Y-m-d", $timestamp);
+            $row->schedule_id = $ctr++;
         }
 
-        print_r(json_encode($final_schedule));
-        // print("<pre>".print_r($final_schedule,true)."</pre>");
+        // echo 'interval: ' . $interval . '<br>';
+        // print("super_final: <br><pre>".print_r($super_final_schedule,true)."</pre>");
 
-        // print_r(json_encode($final_schedule));
+        print_r(json_encode($super_final_schedule));
     }
+
+
+    // 3-15-2020
+    private function incorporateIntervals( $semi_final_schedule, $rooms, $interval ) {
+        $final_room_schedules = [];
+        $room_schedule = [];
+
+        foreach($rooms as $room) {
+            foreach($semi_final_schedule as $sched) {
+                if($room["room_number"] == $sched->room_number) {
+                    array_push($room_schedule, $sched);
+                }
+            }
+
+            $final_room_schedules = array_merge($final_room_schedules, $this->orderByInterval( $room_schedule, $interval, $room ));
+            $room_schedule = [];
+        }
+
+        return (array)$this->convertToObject($final_room_schedules);
+    }
+    // 3-15-2020
 
    function convertToObject($array) {
         $object = new stdClass();
@@ -370,18 +412,70 @@ class CustomController extends CI_Controller
     }
 
     // 3-12-2020
-    private function orderByInterval( $sched ) {
+    private function orderByInterval( $sched, $interval, $room ) {
        // ['7:00-8:00']
         $all_schedules = array();
+        $number_of_times = 2 * $interval + 1;
         foreach( $sched as $value ) {
-            $times = explode("-", $value);
-            $start_time = trim($times[0]);
-            $end_time = trim($times[1]);
-            $time1 = floatval(str_replace(':', '.', $time1));
-            $time2 = floatval(str_replace(':', '.', $time2));
+            $start_time = $value->start_time;
+            $end_time = $value->end_time;
 
+            // echo 'start time: ' . $start_time . '<br>';
+            // echo 'end time: ' . $end_time . '<br>';
+
+            $flag = FALSE;
+            for( $ctr = 0; $ctr < count($all_schedules); $ctr++ ) {
+                $array = $all_schedules[$ctr];
+                // echo 'end(array): ' . end($array) . '<br>';
+                // echo 'equal? ' . ($start_time == end($array) ) . '<br>';
+                if( $start_time == end($array) ) {
+                    array_push($array, $end_time);
+                    $flag = TRUE;
+                    // print("<pre>".print_r($array,true)."</pre>");
+                    unset($all_schedules[$ctr]);
+                    array_splice( $all_schedules, $ctr, 0, array( $array ) );
+                    break;
+                }
+
+
+            }
+
+            // echo 'flag: ' . $flag . '<br>';
+            if($flag == FALSE) {
+                $arr = array();
+                array_push($arr, $start_time);
+                array_push($arr, $end_time);
+                array_push($all_schedules, $arr);
+            }
+
+            // print("<pre>".print_r($all_schedules,true)."</pre>");
 
         }
+
+        // [[]]
+        // print("all_schedule:<br><pre>".print_r($all_schedules,true)."</pre>");
+
+        $final_schedule = [];
+        foreach($all_schedules as $arr){
+            $ctr = 0;
+            for($current_index = 0; $current_index < count($arr); $current_index++) {
+                $ctr++;
+                if( $ctr == $number_of_times ) {
+                    // echo 'start_time: ' . $arr[$current_index - $ctr + 1] . '<br>';
+                    // echo 'end_time: ' . $arr[$current_index] . '<br><br>';
+                    array_push($final_schedule, ['start_time' => $arr[$current_index - $ctr + 1], 
+                                                 'end_time' => $arr[$current_index], 
+                                                 'room_id' => $room["room_id"],
+                                                 'room_number' => $room["room_number"]]);
+                    $ctr = 0;
+                    $current_index--;
+                }
+            }
+        }
+
+        // print("final_schedule:<br><pre>".print_r($final_schedule,true)."</pre>");
+
+        return $final_schedule;
     }
     // 3-12-2020
 
@@ -399,8 +493,8 @@ class CustomController extends CI_Controller
         $temp  = $start;
 
         $st = ['7:00', '7:30', '8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
-                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00'];
-        $et = ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30'];
+        $et = ['7:30', '8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', 
                 '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
         // while($temp < $end) {
         //     array_push( $st, number_format((float)$temp, 2, ':', '') );
@@ -454,22 +548,37 @@ class CustomController extends CI_Controller
 
         if(count($st) >= count($et)) {
             for($idx = 0; $idx < count($st); $idx++){
-                array_push($final, array('start_time' => $st[$idx], 'end_time' => $et[$idx], 'room' => $room));
+                array_push($final, array('start_time' => $st[$idx], 'end_time' => $et[$idx], 
+                    'room_id' => $room["room_id"], 'room_number' => $room["room_number"]));
             }
         }        
         return $final;
     }
 
-    private function find_range($time1, $time2) {
-      $time1 = floatval(str_replace(':', '.', $time1));
-      $time2 = floatval(str_replace(':', '.', $time2));
-      $range = array();
+    private function add_time($time) {
+        $last = substr($time, -1);
+        if( $last == 6 ) {
+            $time = ($time+1) - 0.6;
+        }else {
+            $time += 0.3;
+        }
 
-        $time1++;
+        return $time;
+    }
+
+    private function find_range($time1, $time2) {
+        $time1 = floatval(str_replace(':', '.', $time1));
+        $time2 = floatval(str_replace(':', '.', $time2));
+        $range = array();
+        
+        $time1 = $this->add_time($time1);
 
         while($time1 < $time2){
-            array_push($range, number_format((float)$time1, 2, ':', ''));
-            $time1++;
+            if( substr($time1, -1) != 6 ) {
+                array_push($range, number_format((float)$time1, 2, ':', ''));
+            }
+
+            $time1 = $this->add_time($time1);
         }
 
         return $range;

@@ -63,9 +63,11 @@ $route['report/(:any)'] = 'homeController/getspecificreport/$1';
 $route['add-request'] = 'homeController/addRequests';
 $route['substitute'] = 'homeController/substituteProfessor';
 
+// 03-20-2020 - S
+$route['submit-request'] = 'homeController/submitRequest';
+// 03-20-2020 - E
+
 $route['account-management'] = 'homeController/accountmanagement';
-$route['insert'] = 'homeController/insert';
-$route['reject-reason'] = 'homeController/rejectreason';
 
 $route['view-request'] = 'homeController/viewRequest'; //annthonite
 
@@ -101,8 +103,8 @@ $route['ajax/update-password'] = 'customController/updatepassword';
 $route['ajax/update-report-status'] = 'customController/updatereportstatus';
 $route['ajax/fetch-report-records'] = 'customController/getreportrecords';
 $route['ajax/check-incoming-rfid'] = 'customController/checkincomingrfid';
-$route['ajax/get-courses'] = 'customController/getcourses';
-$route['ajax/get-sections'] = 'customController/getsections';
+$route['ajax/get-courses'] = 'customController/getCourses';
+$route['ajax/get-sections'] = 'customController/getSections';
 $route['ajax/get-rooms'] = 'customController/getrooms';
 $route['ajax/get-rfid'] = 'customController/getrfid';
 $route['ajax/get-all-archive-reports'] = 'customController/getallarchivereports';

@@ -1,7 +1,7 @@
 <div class="page-body" >
 	<div class="container">
 		<div class="section-title">
-			<h3>Time Logs</h3>
+			<h3>Substitute Professor</h3>
 		</div>
 		<!-- annthonite -->
 		<div class="row">

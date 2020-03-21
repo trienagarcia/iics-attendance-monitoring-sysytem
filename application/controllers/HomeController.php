@@ -148,4 +148,43 @@ class HomeController extends CI_Controller {
 		// $data['faculty'] = json_decode(json_encode($this->Custom_model->get_all_users()), true);
 		$this->load->view('layouts/template', $data);
 	}
+
+	//03-20-2020
+	public function submitRequest() {
+		$results = $this->input->post();
+
+		// print("<pre>".print_r($results,true)."</pre>");
+
+		$date = $results["date"];
+        $timestamp = strtotime($date);
+        $day = intval(date('w', $timestamp)) + 1;
+
+		$schedule_data = [
+			"person_id" => $this->session->userdata('person_id'),
+			"room_id" => $results["room_id"],
+			"course_id" => $results["course"],
+			"section_id" => $results["section"],
+			"type_id" => 2,
+			"start_time" => $results["start_time"],
+			"end_time" => $results["end_time"],
+			"day" => $day
+		];
+
+		$schedule_insert = $this->Global_model->insert_data('schedule', $schedule_data);
+
+		$request_data = [
+			"schedule_id" => $schedule_insert,
+			"status_id" => 1,
+			"request_date" => $date
+		];
+
+		print("<pre>".print_r($schedule_data,true)."</pre>");
+		print("<pre>".print_r($request_data,true)."</pre>");
+		
+		$request_insert = $this->Global_model->insert_data('make_up_requests', $request_data);
+
+		
+
+		echo 'schedule_insert: ' . $schedule_insert . '<br>';
+	}
 }
