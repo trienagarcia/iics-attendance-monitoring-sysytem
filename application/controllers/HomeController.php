@@ -183,8 +183,6 @@ class HomeController extends CI_Controller {
 		
 		$request_insert = $this->Global_model->insert_data('make_up_requests', $request_data);
 
-		
-
-		echo 'schedule_insert: ' . $schedule_insert . '<br>';
+		redirect("HomeController/submittedRequests"); 
 	}
 }

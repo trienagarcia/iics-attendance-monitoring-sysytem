@@ -595,6 +595,7 @@ class CustomController extends CI_Controller
     // annthonite
     public function getRequests() {
         $result = $this->Custom_model->getRequests();
+        // print("result: <br><pre>".print_r($result,true)."</pre>");
         print_r(json_encode($result));
     }
 

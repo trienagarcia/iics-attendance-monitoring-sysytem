@@ -144,13 +144,17 @@ date_default_timezone_set('Asia/Taipei');
 			WHERE requests.person_id = ;
 		*/
 		public function get_user_submitted_requests($person_id) {
-			$this->db->select("*");
-			$this->db->from("requests");
-			$this->db->join("rooms", "requests.room_id = rooms.room_id");
-			$this->db->join("sections", "requests.section_id = sections.section_id");
-			$this->db->join("course", "requests.course_id = course.course_id");
-			$this->db->join("status", "requests.status_id = status.status_id");
-			$this->db->where("requests.person_id = ", $person_id);
+			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
+								make_up_requests.request_date, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, 
+								make_up_requests.status_id, status.status_name");
+			$this->db->from("make_up_requests");
+			$this->db->join("schedule", "schedule.schedule_id = make_up_requests.schedule_id");
+			$this->db->join("rooms", "schedule.room_id = rooms.room_id");
+			$this->db->join("sections", "schedule.section_id = sections.section_id");
+			$this->db->join("course", "schedule.course_id = course.course_id");
+			$this->db->join("status", "make_up_requests.status_id = status.status_id");
+			$this->db->join("person", "schedule.person_id = person.person_id");
+			$this->db->where("schedule.person_id = ", $person_id);
 			$q = $this->db->get();
 			return $q->result();
 		}
@@ -173,17 +177,21 @@ date_default_timezone_set('Asia/Taipei');
 		}
 
 		// annthonite
+		// changed - 3-22-2020 - JANG - changed from requests table to make_up_requests
 		public function getRequests() {
-			$this->db->select("*");
-			$this->db->from("requests");
-			$this->db->join("rooms", "requests.room_id = rooms.room_id");
-			$this->db->join("sections", "requests.section_id = sections.section_id");
-			$this->db->join("course", "requests.course_id = course.course_id");
-			$this->db->join("status", "requests.status_id = status.status_id");
-			$this->db->join("person", "requests.person_id = person.person_id");
+			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
+								make_up_requests.request_date, person.first_name, person.last_name, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, make_up_requests.status_id, status.status_name");
+			$this->db->from("make_up_requests");
+			$this->db->join("schedule", "schedule.schedule_id = make_up_requests.schedule_id");
+			$this->db->join("rooms", "schedule.room_id = rooms.room_id");
+			$this->db->join("sections", "schedule.section_id = sections.section_id");
+			$this->db->join("course", "schedule.course_id = course.course_id");
+			$this->db->join("status", "make_up_requests.status_id = status.status_id");
+			$this->db->join("person", "schedule.person_id = person.person_id");
 			$q = $this->db->get();
 			return $q->result();
 		}
+		// changed - 3-22-2020 - JANG
 
 		public function get_all_approved_schedules() {
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number");

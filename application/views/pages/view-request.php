@@ -2,7 +2,7 @@
 <div class="page-body">
 	<div class="container">
 		<div class="section-title">
-			<h3>View Request</h3>
+			<h3>View Requests</h3>
 		</div>
 		<div class="section-body">
         <table id="table-submitted-requests" class="table table-hover dt-responsive" cellspacing="0" width="100%">
@@ -50,8 +50,8 @@ var requests = $("#table-submitted-requests").DataTable({
     columns    : [
         { data : 'request_date' },
         { data : 'last_name' },
-        { data : 'time_from' },
-        { data : 'time_to' },
+        { data : 'start_time' },
+        { data : 'end_time' },
         { data : 'course_code' },
         { data : 'section_name' },
         { data : 'room_number' },
