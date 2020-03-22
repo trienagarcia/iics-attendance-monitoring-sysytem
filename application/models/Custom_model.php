@@ -146,7 +146,7 @@ date_default_timezone_set('Asia/Taipei');
 		public function get_user_submitted_requests($person_id) {
 			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
 								make_up_requests.request_date, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, 
-								make_up_requests.status_id, status.status_name");
+								make_up_requests.status_id, status.status_name, make_up_requests.request_id");
 			$this->db->from("make_up_requests");
 			$this->db->join("schedule", "schedule.schedule_id = make_up_requests.schedule_id");
 			$this->db->join("rooms", "schedule.room_id = rooms.room_id");
@@ -180,7 +180,7 @@ date_default_timezone_set('Asia/Taipei');
 		// changed - 3-22-2020 - JANG - changed from requests table to make_up_requests
 		public function getRequests() {
 			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
-								make_up_requests.request_date, person.first_name, person.last_name, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, make_up_requests.status_id, status.status_name");
+								make_up_requests.request_date, person.first_name, person.last_name, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, make_up_requests.status_id, status.status_name, make_up_requests.request_id");
 			$this->db->from("make_up_requests");
 			$this->db->join("schedule", "schedule.schedule_id = make_up_requests.schedule_id");
 			$this->db->join("rooms", "schedule.room_id = rooms.room_id");

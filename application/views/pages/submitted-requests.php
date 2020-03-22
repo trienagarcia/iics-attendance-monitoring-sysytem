@@ -125,6 +125,30 @@
 		</div>
 	</div>
 
+	<!-- annthonite -->
+	<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm" role="document">
+		<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title" id="requestModalLabel">
+				Confirmation
+			</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you want to cancel?</p>
+		</div>
+		<div class="modal-footer">
+			<!-- Modal Footer -->
+			<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+			<button type="button" class="btn btn-info" id="cancelRequest">Yes</button>
+		</div>
+		</div>
+	</div>
+	</div>
+
 <script>
 	var requests;
 	$(document).ready(function() {
@@ -141,8 +165,8 @@
 				"order": [[ 0, "desc" ]],
 				columns: [
 				{ data: 'request_date' },
-				{ data: 'time_from'},
-				{ data: 'time_to' },
+				{ data: 'start_time'},
+				{ data: 'end_time' },
 				{ data: 'course_code'},
 				{ data: 'section_name'},
 				{ data: 'room_number'},
@@ -156,8 +180,7 @@
 						"render": function ( data, type, row ) {
 							var html = "";
 							// annthonite
-							// html += "<button class='btn btn-primary btn-sm btn-edit-request' data-id='"+data.request_id+"'>&nbsp;&nbsp;Edit&nbsp;&nbsp;</button> ";
-							html += "<button class='btn btn-danger btn-sm btn-cancel' data-id='"+data.hw_report_id+"'>Cancel</button>";
+							html += "<button class='btn btn-danger btn-sm btn-cancel cancelRequestBtn' requestID='" + row['request_id'] + "'>Cancel</button>";
 							return html;
 						} 
 					}
@@ -231,9 +254,35 @@
             });
 		});
 
+		// annthonite
+		$(document).on('click', '.cancelRequestBtn', function () {
+			var oModal = $('#requestModal');
+			var sFooter = `
+				<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-info" id="cancelRequestBtn" requestID="` + $(this).attr('requestID') + `">Yes</button>
+			`;
+			oModal.find('.modal-footer').html(sFooter);
+			oModal.modal('show');
+		});
 
-		
+		// annthonite
+		$(document).on('click', '#cancelRequestBtn', function () {
+			var oData = {
+				'request_id' : $(this).attr('requestID')
+			};
 
-
+			$.ajax({
+                url     : '<?=base_url()?>ajax/delete-requests',
+                type    : 'POST',
+                data    : oData,
+                success : function (data) {
+					$('#requestModal').modal('hide');
+                	requests.ajax.reload();
+				},
+				error   : function () {
+					alert("Request Successfully Deleted!");
+				}
+            });
+		});
 	});
 </script>
