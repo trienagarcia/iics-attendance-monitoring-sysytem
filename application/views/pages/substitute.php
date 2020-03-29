@@ -20,10 +20,6 @@
 					?>
 		        </select>
 			</div>
-			<div class="col">
-				<div class="label-input">Date</div>
-				<input class="form-control" id="date_picker" name="date_picker">
-			</div>
 		<!-- annthonite -->
 		</div>
 		<br>
@@ -67,9 +63,9 @@
 		<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" id="dynamicModalLabel">
+					<h6 class="modal-title" id="dynamicModalLabel">
 						<!-- Title -->
-					</h4>
+					</h6>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">
@@ -78,7 +74,7 @@
 				<div class="modal-footer">
 					<!-- button -->
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-info" id="updateLogs">Save</button>
+					<button type="button" class="btn btn-info" id="saveSubstituteBtn">Save</button>
 				</div>
 			</div>
 		</div>
@@ -89,21 +85,11 @@
 
 <script>
 	var logs;
+	
 	$(document).ready(function() {
 		// annthonite
 		$('#professor').change(function(sProfessor) {
-			getFilteredTimeLogs($('#professor').val(), $('#date_picker').val());
-		});
-		
-		// annthonite
-		$('#date_picker').datepicker({
-			maxDate: '0',
-			dateFormat: 'yy-mm-dd',
-			changeMonth: true,
-			changeYear: true,
-			onSelect: function(sDate) {
-				getFilteredTimeLogs($('#professor').val(), sDate);
-			},
+			getFilteredTimeLogs($('#professor').val());
 		});
 		
 		$('#submitted-reports a').removeClass('nav-color');
@@ -124,38 +110,76 @@
 				{ data: 'section_name' },
 				{ data: 'room_number' },
 				{ render: function ( data, type, row, meta ) {
-						var sRemarks = row['remarks'] === null ? '' : row['remarks'];
 						return `
-							<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
-							<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `' style="margin-top:5px">Edit Remarks</button>
+							<button class='btn btn-info btn-sm btn-info' id='btnUpdateSubstitute' scheduleID='` + row['schedule_id'] + `' personID='` + row['person_id'] + `' style="margin-top:5px">Substitute</button>
 						`;
     				}
 				}
 			]
 		});
 
-		setInterval( function () {
-			logs.ajax.reload();
-		}, 2000 );
+		// setInterval( function () {
+		// 	logs.ajax.reload();
+		// }, 2000 );
 
+		// annthonite
+		$(document).on('click', '#btnUpdateSubstitute', function (event) {
+			var modal = $('#dynamicModal');
+			var sBody = `
+				<select class="form-control" name="substitute" id="changeSubstitute" data-parsley-required="true">
+					<?php
+						echo '<option disabled selected></option>';
+						foreach ($faculty as $f) {
+							echo '<option scheduleID="` + $(this).attr("scheduleID") + `" personID="'.$f['person_id'].'">'.$f['first_name']. ' ' . $f['last_name'] . '</option>';	
+						}
+					?>
+		        </select>
+			`;
 
-		$(document).on('click', '.btn-reject', function(data) {
-			
-		});
-
-		$(document).on('click', '.btn-view-report', function(data) {
-			var report_id = $(this).attr('data-id');
-			window.location.href = "<?=base_url()?>report/"+report_id;
-		});
-
-		$(document).on('click', '.btn-edit-report', function(data) {
-			var form_id = "#form_" + $(this).attr('data-id');
-			$(form_id).submit();
+			modal.find('.modal-title').text('Change Substitute');
+			modal.find('.modal-body').html(sBody);
+			modal.modal('show');
 		});
 
 		// annthonite
-		function getFilteredTimeLogs(iProfessorID, sDate) {
-			var sData = "person_id=" + iProfessorID + "&log_date=" + sDate;
+		$(document).on('click', '#saveSubstituteBtn', function () {
+			var iPersonID = $( "#changeSubstitute option:selected" ).attr('personID');
+			var iScheduleID = $( "#changeSubstitute option:selected" ).attr('scheduleID');
+
+			if (iPersonID !== undefined || iScheduleID !== undefined) {
+				$( "#changeSubstitute").removeClass('is-invalid');
+				updateSubstitute(iPersonID, iScheduleID);
+			} else {
+				$( "#changeSubstitute").addClass('is-invalid');
+			}
+		});
+
+		// annthonite
+		function updateSubstitute(iPersonID, iScheduleID) {
+			var sUrl = "<?=base_url()?>ajax/update-schedule-substitute";
+			var oData = {
+				'person_id'   : iPersonID,
+				'schedule_id' : iScheduleID
+			}
+
+			$.ajax({
+				url     : sUrl,
+				type    : 'POST',
+				data    : oData,
+				success : function(mData) {
+					$('#dynamicModal').modal('hide');
+					logs.ajax.reload();
+				},
+				error   : function (mData) {
+					$('#dynamicModal').modal('hide');
+					alert('Error occured!');
+				}
+			});
+		}
+
+		// annthonite
+		function getFilteredTimeLogs(iProfessorID) {
+			var sData = "person_id=" + iProfessorID;
 			var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
 			logs.destroy();
 			logs = $("#table-submitted-reports").DataTable({
@@ -167,142 +191,21 @@
 				responsive:true,
 				"order": [[ 0, "desc" ]],
 				columns: [
-					// log.attendance_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
-					{ data: 'first_name'},
-					{ data: 'last_name'},
+					{ data: 'first_name' },
+					{ data: 'last_name' },
 					{ data: 'course_code' },
 					{ data: 'section_name' },
 					{ data: 'room_number' },
-					{ data: 'time_in' },
-					{ data: 'time_out'},
-					{ data: 'attendance_name' },
-					{ data: 'remarks'},
 					{ render: function ( data, type, row, meta ) {
 							var sRemarks = row['remarks'] === null ? '' : row['remarks'];
 							return `
-								<button class='btn btn-success btn-sm btn-success' id='btnUpdateAttendance' attendanceval='` + row['attendance_id'] + `' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `''>Edit Attendance</button>
-								<button class='btn btn-info btn-sm btn-info' id='btnUpdateRemarks' remarksval='` + sRemarks + `' logsidval='` + row['logs_id'] + `' style="margin-top:5px">Edit Remarks</button>
+								<button class='btn btn-info btn-sm btn-info' id='btnUpdateSubstitute' scheduleID='` + row['schedule_id'] + `' personID='` + row['person_id'] + `' style="margin-top:5px">Substitute</button>
 							`;
 						}
 					}
 				],
 				columnDefs: []
 			});
-		}
-
-		// annthonite
-		$(document).on('click', '#btnUpdateAttendance', function (event) {
-			var modal = $('#dynamicModal');
-			var sBody = `
-			<form id="editAttendanceForm">
-				<input name="logsid" id="logsid" value="" hidden />		
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="attendance" id="radioPresent" value="1">
-					<label class="form-check-label" for="radioPresent">
-						Present
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="attendance" id="radioAbsent" value="2">
-					<label class="form-check-label" for="radioAbsent">
-						Absent
-					</label>
-				</div><br />
-				<div class="form-group">
-					<label for="textareaRemarks">Remarks</label>
-					<textarea class="form-control" id="textareaRemarks" rows="3" maxlength="150" style="resize: none" required></textarea>
-					<small id="textareaRemarksCounter" class="text-muted pull-right"></small>
-				</div>
-			</form>
-			`;
-			var bPresent = $(this).attr('attendanceval') === `1` ? true : false;
-			var bAbsent = $(this).attr('attendanceval') === `2` ? true : false;
-			var iLogID = $(this).attr('logsidval');
-
-			modal.find('.modal-title').text('Edit Attendance');
-			modal.find('.modal-body').html(sBody);
-			modal.modal('show');
-			
-			$('#radioPresent').attr('checked', bPresent);
-			$('#radioAbsent').attr('checked', bAbsent);
-			$('#logsid').val(iLogID);
-			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
-		});
-
-		// annthonite
-		$(document).on('click', '#btnUpdateRemarks', function (event) {
-			var modal = $('#dynamicModal');
-			var sBody = `
-				<input name="logsid" id="logsid" value="" hidden />		
-				<div class="form-group">
-					<label for="textareaRemarks">Remarks</label>
-					<textarea class="form-control" id="textareaRemarks" rows="3" maxlength="150" style="resize: none"></textarea>
-					<small id="textareaRemarksCounter" class="text-muted pull-right"></small>
-				</div>
-			`;
-			var iLogID = $(this).attr('logsidval');
-
-			modal.find('.modal-title').text('Edit Remarks');
-			modal.find('.modal-body').html(sBody);
-			modal.modal('show');
-		
-			$('#logsid').val(iLogID);
-			$('#textareaRemarksCounter').html(($('#textareaRemarks').val()).length + '/150');
-		});
-
-		// annthonite
-		$(document).on('keydown keypress keyup', '#textareaRemarks', function () {
-			var iCounter = $(this).val().length;
-			$('#textareaRemarksCounter').html(iCounter + '/150');
-		});
-
-		// annthonite
-		$(document).on('click', '#updateLogs', function () {
-			if ($('input[name=attendance]').length > 0) {
-				var sUrl = '<?=base_url()?>ajax/update-logs';
-				var oData = {
-					'logs_id'       : $('#logsid').val(),
-					'attendance_id' : $('input[name=attendance]:checked').val(),
-					'remarks'       : $('#textareaRemarks').val()
-				};
-			} else {
-				var sUrl = '<?=base_url()?>ajax/update-logs-remarks';
-				var oData = {
-					'logs_id' : $('#logsid').val(),
-					'remarks' : $('#textareaRemarks').val()
-				};
-			}
-
-			var bValidate = validateUpdateLogs(oData);
-
-			if (bValidate === true) {
-				// annthonite
-				$.ajax({
-					url     : sUrl,
-					type    : 'POST',
-					data    : oData,
-					success : function(data) {
-						alert('Successfully updated');
-					},
-					error   : function (data) {
-						alert('Error Occured');
-					}
-				});
-
-				$('#dynamicModal').modal('hide');
-			}
-
-			logs.ajax.reload();
-		});
-
-		//annthonite
-		function validateUpdateLogs (oData) {
-			if (oData['remarks'] === "") {
-				$('#textareaRemarks').addClass("is-invalid");
-				return false;
-			}
-			$('#textareaRemarks').removeClass('is-invalid');
-			return true;
 		}
 	});
 

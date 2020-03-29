@@ -617,4 +617,15 @@ class CustomController extends CI_Controller
         $where = $this->input->post('request_id');
         return $this->Global_model->delete_data($table, $field, $where);
     }
+
+    // annthonite
+    public function updateScheduleSubstitute() {
+        $table = 'schedule';
+        $data = array(
+            'person_id' => $this->input->post('person_id')
+        );
+        $field = 'schedule_id';
+        $where = $this->input->post('schedule_id');
+        return $this->Global_model->update_data($table, $data, $field, $where);
+    }
 }
