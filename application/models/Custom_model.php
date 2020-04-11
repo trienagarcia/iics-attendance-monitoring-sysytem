@@ -76,7 +76,7 @@ date_default_timezone_set('Asia/Taipei');
 		 AND log.log_date < CURRENT_DATE
 		*/
 		public function get_all_time_logs() {
-			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id", "left");
 			$this->db->join("logs", "logs.person_id = person.person_id", "left");
@@ -149,7 +149,7 @@ date_default_timezone_set('Asia/Taipei');
 		public function get_user_submitted_requests($person_id) {
 			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
 								make_up_requests.request_date, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, 
-								make_up_requests.status_id, status.status_name");
+								make_up_requests.status_id, status.status_name, make_up_requests.request_id");
 			$this->db->from("make_up_requests");
 			$this->db->join("schedule", "schedule.schedule_id = make_up_requests.schedule_id");
 			$this->db->join("rooms", "schedule.room_id = rooms.room_id");
@@ -183,7 +183,7 @@ date_default_timezone_set('Asia/Taipei');
 		// changed - 3-22-2020 - JANG - changed from requests table to make_up_requests
 		public function getRequests() {
 			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
-								make_up_requests.request_date, person.first_name, person.last_name, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, make_up_requests.status_id, status.status_name");
+								make_up_requests.request_date, person.first_name, person.last_name, schedule.start_time, schedule.end_time, schedule.course_id, course.course_code, make_up_requests.status_id, status.status_name, make_up_requests.request_id");
 			$this->db->from("make_up_requests");
 			$this->db->join("schedule", "schedule.schedule_id = make_up_requests.schedule_id");
 			$this->db->join("rooms", "schedule.room_id = rooms.room_id");

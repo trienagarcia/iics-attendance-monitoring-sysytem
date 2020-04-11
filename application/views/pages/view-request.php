@@ -38,6 +38,30 @@
 </div>
 
 <!-- annthonite -->
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="requestModalLabel">
+            <!-- Modal Title -->
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Modal Body -->
+      </div>
+      <div class="modal-footer">
+        <!-- Modal Footer -->
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-info">Yes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- annthonite -->
 <script>
 var requests = $("#table-submitted-requests").DataTable({
     ajax : {
@@ -63,8 +87,8 @@ var requests = $("#table-submitted-requests").DataTable({
         "data"    : 'request_id',
         "render"  : function (data, type, row) {
             var html = "";
-            html += "<button class='btn btn-info btn-sm' id='approveBtn' requestID='" + row['request_id'] + "'>Approve</button>";
-            html += "<button class='btn btn-danger btn-sm' id='rejectBtn' requestID='" + row['request_id'] + "'>Reject</button>";
+            html += row['status_id'] == 1 ? "<button class='btn btn-info btn-sm' id='approveBtn' requestID='" + row['request_id'] + "'>Approve</button>" : "";
+            html += row['status_id'] == 1 ? "<button class='btn btn-danger btn-sm' id='rejectBtn' requestID='" + row['request_id'] + "'>Reject</button>" : "";
             return html;
         } 
     }]
@@ -72,19 +96,41 @@ var requests = $("#table-submitted-requests").DataTable({
 
 $(document).on('click', '#approveBtn', function () {
     // Approved = 2
-    changeRequestStatus($(this).attr('requestID'), 2);
+    var oModal = $('#requestModal');
+    var sTitle = `Confirmation`;
+    var sBody = `<p>Are you sure you want to approve?</p>`;
+    var sFooter = `
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-info" id="updateRequestBtn" requestID="` + $(this).attr('requestID') + `" requestStatus="2">Yes</button>
+    `;
+
+    oModal.find('.modal-title').text(sTitle);
+    oModal.find('.modal-body').html(sBody);
+    oModal.find('.modal-footer').html(sFooter);
+    oModal.modal('show');
 });
 
 $(document).on('click', '#rejectBtn', function () {
     // Rejected = 3
-    changeRequestStatus($(this).attr('requestID'), 3);
+    var oModal = $('#requestModal');
+    var sTitle = `Confirmation`;
+    var sBody = `<p>Are you sure you want to approve?</p>`;
+    var sFooter = `
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-info" id="updateRequestBtn" requestID="` + $(this).attr('requestID') + `" requestStatus="3">Yes</button>
+    `;
+
+    oModal.find('.modal-title').text(sTitle);
+    oModal.find('.modal-body').html(sBody);
+    oModal.find('.modal-footer').html(sFooter);
+    oModal.modal('show');
 });
 
-function changeRequestStatus (requestID, requestStatus) {
+$(document).on('click', '#updateRequestBtn', function () {
     var sUrl = "<?=base_url()?>ajax/update-request-status";
     var oData = {
-        'request_id' : requestID,
-        'status_id'  : requestStatus
+        'request_id' : $(this).attr('requestID'),
+        'status_id'  : $(this).attr('requestStatus')
     }
 
     $.ajax({
@@ -92,14 +138,14 @@ function changeRequestStatus (requestID, requestStatus) {
         type    : 'POST',
         data    : oData,
         success : function(mData) {
-            alert('Successfully updated');
+            $('#requestModal').modal('hide');
         },
         error   : function (mData) {
-            alert('Error Occured');
+            $('#requestModal').modal('hide');
+            alert('Error occured!');
         }
     });
 
     requests.ajax.reload();
-}
-
+});
 </script>

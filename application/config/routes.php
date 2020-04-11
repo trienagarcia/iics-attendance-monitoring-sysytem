@@ -119,7 +119,12 @@ $route['ajax/update-logs-remarks'] = 'customController/updateLogsRemarks'; //ann
 $route['ajax/get-schedules'] = 'customController/getOpenSchedules';
 $route['ajax/get-requests'] = 'customController/getRequests'; //annthonite
 $route['ajax/update-request-status'] = 'customController/updateRequestStatus'; //annthonite
+
 $route['ajax/get-all-approved-schedules'] = 'customController/getAllApprovedSchedules';
+
+$route['ajax/delete-requests'] = 'customController/deleteRequests'; //annthonite
+$route['ajax/get-all-approved-schedules'] = 'customController/getAllApprovedSchedules';
+$route['ajax/update-schedule-substitute'] = 'customController/updateScheduleSubstitute'; //annthonite
 
 // test rfid from processing
 $route['rfid_http_test'] = 'customController/getRfidFromHttpPost';

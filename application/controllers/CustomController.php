@@ -673,13 +673,33 @@ class CustomController extends CI_Controller
 
     // annthonite
     public function updateRequestStatus() {
-        $table = 'requests';
+        $table = 'make_up_requests';
         $data = array(
             'status_id' => $this->input->post('status_id')
         );
         $field = 'request_id';
         $where = $this->input->post('request_id');
         return $this->Global_model->update_data($table, $data, $field, $where);
+    }
+
+    // annthonite
+    public function deleteRequests() {
+        $table = 'make_up_requests';
+        $field = 'request_id';
+        $where = $this->input->post('request_id');
+        return $this->Global_model->delete_data($table, $field, $where);
+    }
+
+    // annthonite
+    public function updateScheduleSubstitute() {
+        $table = 'schedule';
+        $data = array(
+            'person_id' => $this->input->post('person_id')
+        );
+        $field = 'schedule_id';
+        $where = $this->input->post('schedule_id');
+        return $this->Global_model->update_data($table, $data, $field, $where);
+
     }
 
     // 04-09-2020
@@ -706,4 +726,3 @@ class CustomController extends CI_Controller
         // echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NONE&nbsp;&nbsp;&nbsp;<br>';
         return 300;
     }
-}
