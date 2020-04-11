@@ -120,3 +120,7 @@ $route['ajax/get-schedules'] = 'customController/getOpenSchedules';
 $route['ajax/get-requests'] = 'customController/getRequests'; //annthonite
 $route['ajax/update-request-status'] = 'customController/updateRequestStatus'; //annthonite
 $route['ajax/get-all-approved-schedules'] = 'customController/getAllApprovedSchedules';
+
+// test rfid from processing
+$route['rfid_http_test'] = 'customController/getRfidFromHttpPost';
+$route['ajax/compare-rfid-counter'] = 'customController/checkRFIDTableDifference';

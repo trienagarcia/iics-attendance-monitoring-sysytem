@@ -94,6 +94,16 @@ date_default_timezone_set('Asia/Taipei');
 			endif;
 		}
 
+		function update_data_simple($table,$data){
+			$this->db->update($table, $data);
+			$updated_status = $this->db->affected_rows();
+			if($updated_status):
+			    return "success";
+			else:
+			    return "failed";
+			endif;
+		}
+
 		function delete_data($table, $field, $where){
 			$this->db->where($field, $where);
 			$this->db->delete($table);

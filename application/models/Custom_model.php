@@ -43,12 +43,15 @@ date_default_timezone_set('Asia/Taipei');
 			return null;
 		}
 
+		// select * from logs where time_out IS NULL;
 		public function get_logs($rfid_id, $person_id, $date) {
 			$this->db->select("*");
 			$this->db->from("logs");
 			$this->db->where("rfid_id = ", $rfid_id);
 			$this->db->where("person_id = ", $person_id);
-			$this->db->where("date = ", $date);
+			$this->db->where("log_date = ", $date);
+			$this->db->where("time_out IS NULL");
+			$this->db->order_by("time_in", "desc");
 			$q = $this->db->get();
 
 			if ($q->num_rows() > 0)
@@ -203,5 +206,31 @@ date_default_timezone_set('Asia/Taipei');
 			// ADD and date
 			$q = $this->db->get();
 			return $q->result();
+		}
+
+		public function get_rfid_comparison() {
+			$this->db->select("(rfid_name_1 = rfid_name_2) as rfid_result, (datetime_1 = datetime_2) as datetime_result, rfid_name_1, datetime_1");
+			$this->db->from("rfid_counter");
+			$q = $this->db->get();
+			return $q->result();
+		}
+
+		public function get_rfid_counter() {
+			$this->db->select("*");
+			$this->db->from("rfid_counter");
+			$q = $this->db->get();
+			return $q->result();
+		}
+
+		public function update_rfid_counter() {
+			$this->db->set('rfid_name_2', 'rfid_name_1', false);
+			$this->db->set('datetime_2', 'datetime_1', false);
+			$this->db->update('rfid_counter');
+			$updated_status = $this->db->affected_rows();
+			if($updated_status):
+			    return "success";
+			else:
+			    return "failed";
+			endif;
 		}
 	}

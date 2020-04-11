@@ -187,6 +187,78 @@ class CustomController extends CI_Controller
         // print_r(json_encode($rfid_data));
     }
 
+    public function checkRFIDTableDifference() {
+        $result = $this->Custom_model->get_rfid_comparison();
+
+        // print("<pre>".print_r($result,true)."</pre>");
+
+        if(!empty($result)) {
+            // echo '$result[0]->rfid_result: ' . $result[0]->rfid_result . '<br>';
+            // echo '$result[0]->datetime_result: ' . $result[0]->datetime_result . '<br>';
+            if( $result[0]->rfid_result == 0 || $result[0]->datetime_result == 0 ) {
+                
+                // echo 'response: ' . $response . '<br>';
+                $rfid_name_1 = trim($result[0]->rfid_name_1);
+                $rfid = $this->Custom_model->get_existing_rfids($rfid_name_1);
+                if ($rfid) {
+                    $person_id = $rfid->person_id;
+                    $current_date = date('Y-m-d');
+                    $current_datetime = date('Y-m-d h:i:s');
+
+                    //Check logs if it's existing
+                    $rfid_logs = $this->Custom_model->get_logs($rfid->rfid_id, $person_id, $current_date);
+                    $table = 'logs';
+                    $errors = '';
+                    if($rfid_logs) {
+                        // Add time out
+                        $data = array('time_out' => $current_datetime);
+                        $field = 'logs_id';
+                        $where = $rfid_logs->logs_id;
+                        $response = $this->Global_model->update_data($table, $data, $field, $where);
+                        $welcome_title = "Signing Off";
+
+                        if($response === "failed") {
+                            $errors = "Update logs Failed";
+                        }
+                    }else{
+                        $data = array(
+                            'person_id' => $person_id,
+                            'rfid_id' => $rfid->rfid_id,
+                            'log_date' => $current_date,
+                            'attendance_id' => 1,
+                        );
+                        $logs_insert = $this->Global_model->insert_data('logs', $data);
+                        $welcome_title = "Signing On";
+
+                        if($logs_insert === "failed") {
+                            $errors = "Insert logs Failed";
+                        }
+
+                    }
+
+                    echo json_encode(array('success' => true, 
+                                            'message' => $welcome_title, 
+                                            'rfid_data' => $rfid->rfid_data, 
+                                            'number' => $rfid->person_number, 
+                                            'first_name' => $rfid->first_name, 
+                                            'last_name' => $rfid->last_name,
+                                            'time' => $current_datetime, 
+                                            'errors' => $errors));
+                }else{
+                    echo json_encode(array('success' => false, 'message' => 'RFID Not Recognized. Please Sign up for an account.'));
+                }
+
+                $response = $this->Custom_model->update_rfid_counter();
+            }
+            else{
+                echo json_encode(array('success' => true, 'message' => 'existing'));
+            }
+        }
+
+
+
+    }
+
     public function deleteAccount() {
         $table = "person";
         $field = "person_id";
@@ -608,5 +680,30 @@ class CustomController extends CI_Controller
         $field = 'request_id';
         $where = $this->input->post('request_id');
         return $this->Global_model->update_data($table, $data, $field, $where);
+    }
+
+    // 04-09-2020
+    public function getRfidFromHttpPost() {
+        $results = $this->input->post();
+
+        print("<pre>".print_r($results,true)."</pre>");
+
+        if(!empty($results)) {
+            // echo '&nbsp;&nbsp;&nbsp;&nbsp;RECEIVED&nbsp; <br>';
+            $table = 'rfid_counter';
+            $data = array(
+                'rfid_name_1' => trim($results["rfid_name"]),
+                'datetime_1' => trim($results["datetime"])
+            );
+            $field = 'counter_id';
+            $where = 1;
+
+            $response = $this->Global_model->update_data($table, $data, $field, $where);
+
+            return $response;
+        }
+
+        // echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NONE&nbsp;&nbsp;&nbsp;<br>';
+        return 300;
     }
 }
