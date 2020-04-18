@@ -105,6 +105,10 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("sections", "sections.section_id = schedule.section_id");
 			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");
 			$this->db->where("person.person_id = ", $this->session->userdata('person_id'));
+			// annthonite
+			if (!empty($this->input->get('date'))) {
+				$this->db->where("DATE_FORMAT(logs.time_in, '%Y-%m-%d') = ", $this->input->get('date'));
+			}
 			$q = $this->db->get();
 			return $q->result();
 		}

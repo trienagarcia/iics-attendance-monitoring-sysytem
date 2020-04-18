@@ -52,14 +52,14 @@
 		<script>
 			// annthonite
 			$('#inputDate').datepicker({
-				minDate: new Date(),
-				dateFormat: 'yy-mm-dd',
-				changeMonth: true,
-				changeYear: true,
-				onSelect: function(sDate) {
+				minDate     : new Date(),
+				dateFormat  : 'yy-mm-dd',
+				changeMonth : true,
+				changeYear  : true,
+				onSelect    : function(sDate) {
 					getFilteredSchedules(sDate, $('#inputTime').val());
 				},
-			});
+			}).datepicker("setDate", new Date());
 
 			//annthonite
 			$('#inputTime').change(function(){
