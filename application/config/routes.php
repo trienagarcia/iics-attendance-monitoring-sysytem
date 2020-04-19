@@ -129,3 +129,4 @@ $route['ajax/update-schedule-substitute'] = 'customController/updateScheduleSubs
 // test rfid from processing
 $route['rfid_http_test'] = 'customController/getRfidFromHttpPost';
 $route['ajax/compare-rfid-counter'] = 'customController/checkRFIDTableDifference';
+$route['ajax/check-request-date'] = 'customController/checkRequestDate';

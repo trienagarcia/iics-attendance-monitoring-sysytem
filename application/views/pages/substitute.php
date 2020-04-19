@@ -1,7 +1,7 @@
 <div class="page-body" >
 	<div class="container">
 		<div class="section-title">
-			<h3>Substitute Professor</h3>
+			<h3>View Schedule</h3>
 		</div>
 		<!-- annthonite -->
 		<div class="row">
@@ -41,6 +41,9 @@
 						<th>Course</th>
 						<th>Section</th>
 						<th>Room No.</th>
+						<th>Start Time</th>
+						<th>End Time</th>
+						<th>Scheduled Date</th>
 						<th>Actions</th>
 				</thead>
 				<tfoot>
@@ -50,6 +53,9 @@
 						<th>Course</th>
 						<th>Section</th>
 						<th>Room No.</th>
+						<th>Start Time</th>
+						<th>End Time</th>
+						<th>Scheduled Date</th>
 						<th>Actions</th>
 					</tr>
 				</tfoot>
@@ -109,6 +115,9 @@
 				{ data: 'course_code' },
 				{ data: 'section_name' },
 				{ data: 'room_number' },
+				{ data: 'start_time' },
+				{ data: 'end_time' },
+				{ data: 'request_date' },
 				{ render: function ( data, type, row, meta ) {
 						return `
 							<button class='btn btn-info btn-sm btn-info' id='btnUpdateSubstitute' scheduleID='` + row['schedule_id'] + `' personID='` + row['person_id'] + `' style="margin-top:5px">Substitute</button>
@@ -196,6 +205,9 @@
 					{ data: 'course_code' },
 					{ data: 'section_name' },
 					{ data: 'room_number' },
+					{ data: 'start_time' },
+					{ data: 'end_time' },
+					{ data: 'request_date' },
 					{ render: function ( data, type, row, meta ) {
 							var sRemarks = row['remarks'] === null ? '' : row['remarks'];
 							return `

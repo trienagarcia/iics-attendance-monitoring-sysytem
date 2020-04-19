@@ -40,6 +40,7 @@
 			<table id="table-submitted-reports" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
 					<tr>
+						<th>Schedule ID</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Course</th>
@@ -53,6 +54,7 @@
 				</thead>
 				<tfoot>
 					<tr>
+						<th>Schedule ID</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Course</th>
@@ -126,6 +128,7 @@
 			"order": [[ 0, "desc" ]],
 			columns: [
 				// logs.attendance_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
+				{ data: 'schedule_id' },
 				{ data: 'first_name' },
 				{ data: 'last_name' },
 				{ data: 'course_code' },
@@ -150,41 +153,6 @@
 			logs.ajax.reload();
 		}, 2000 );
 
-		$(document).on('click', '.btn-approve', function(data) {
-			var report_id = $(this).attr('data-id');
-			var status = "Approved";
-			var r = confirm("Are you sure you want to approve this report?");
-			if (r == true) {
-				$.ajax({
-				url: "<?=base_url()?>ajax/update-report-status",
-				type: "POST",
-				data: {
-					report_id: report_id,
-					status: status
-				},
-				success: function(data) {
-					alert("Report Successfully Approved");
-					reports.ajax.reload();
-				}
-				});
-			} else {
-				return false;
-			}
-		});
-
-		$(document).on('click', '.btn-reject', function(data) {
-			
-		});
-
-		$(document).on('click', '.btn-view-report', function(data) {
-			var report_id = $(this).attr('data-id');
-			window.location.href = "<?=base_url()?>report/"+report_id;
-		});
-
-		$(document).on('click', '.btn-edit-report', function(data) {
-			var form_id = "#form_" + $(this).attr('data-id');
-			$(form_id).submit();
-		});
 
 		// annthonite
 		function getFilteredTimeLogs(iProfessorID, sDate) {

@@ -64,31 +64,40 @@ date_default_timezone_set('Asia/Taipei');
 		}
 
 		/*
+		 for insert 
+
+		 Select * from `logs` log INNER JOIN `schedule` s ON log.schedule_id = s.schedule_id where log.attendance_id = 0 and log.log_date = CURRENT_DATE ORDER BY s.start_time;
+
+		/*
 		-- TODO ADD DATES to CI sql statement
 		-- TODO ADD REMARKS
-		SELECT * FROM `schedule` s 
-		LEFT JOIN person p ON s.person_id = p.person_id 
-		LEFT JOIN `logs` log ON log.person_id = p.person_id 
-		LEFT JOIN rooms room ON room.room_id = s.room_id 
-		LEFT JOIN course c ON c.course_id = s.course_id 
-		LEFT JOIN sections sec ON sec.section_id = s.section_id 
-		LEFT JOIN attendance a ON a.attendance_id = log.attendance_id
-		 AND log.log_date < CURRENT_DATE
+		Select * from `schedule` s INNER JOIN `person` p on s.person_id = p.person_id 
+		INNER JOIN `logs` log On s.schedule_id = log.schedule_id
+		INNER JOIN `rooms` room ON room.room_id = s.room_id
+		INNER JOIN `course` course ON course.course_id = s.course_id
+		INNER JOIN `sections` section on section.section_id = s.section_id
+		INNER JOIN `attendance` attend ON attend.attendance_id = log.attendance_id;
 		*/
 		public function get_all_time_logs() {
-			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, 
+				make_up_requests.request_date");
 			$this->db->from("schedule");
-			$this->db->join("person", "schedule.person_id = person.person_id", "left");
-			$this->db->join("logs", "logs.person_id = person.person_id", "left");
-			$this->db->join("rooms", "rooms.room_id = schedule.room_id", "left");
-			$this->db->join("course", "course.course_id = schedule.course_id", "left");
-			$this->db->join("sections", "sections.section_id = schedule.section_id", "left");
-			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id", "left");
+			$this->db->join("person", "schedule.person_id = person.person_id");
+			$this->db->join("logs", "logs.schedule_id = schedule.schedule_id");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->join("course", "course.course_id = schedule.course_id");
+			$this->db->join("sections", "sections.section_id = schedule.section_id");
+			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");			
+			// add - 04/14 - add make up requests date
+			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id", "left");
+			$this->db->group_by("schedule.schedule_id");
 			// ADD and date
 			$q = $this->db->get();
 			return $q->result();
 		}
 
+		// INSERT INTO `logs` (person_id, log_date) Select person_id, now() from `schedule` s where s.day = DAYOFWEEK(now())
+		// Select * from `logs` log INNER JOIN `schedule` s ON log.schedule_id = s.schedule_id where log.attendance_id = 0 and log.log_date = CURRENT_DATE ORDER BY s.start_time
 		/*
 			SELECT * FROM `schedule` s 
 			INNER JOIN person p ON s.person_id = p.person_id 
@@ -114,14 +123,17 @@ date_default_timezone_set('Asia/Taipei');
 
 		// annthonite
 		public function get_filtered_time_logs() {
-			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id");
+			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, 
+				make_up_requests.request_date");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
-			$this->db->join("logs", "logs.person_id = person.person_id");
+			$this->db->join("logs", "logs.schedule_id = schedule.schedule_id");
 			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
 			$this->db->join("course", "course.course_id = schedule.course_id");
 			$this->db->join("sections", "sections.section_id = schedule.section_id");
-			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");
+			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");			
+			// add - 04/14 - add make up requests date
+			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id", "left");
 
 			if (!empty($this->input->get('person_id'))) {
 				$this->db->where("person.person_id = ", $this->input->get('person_id'));
@@ -232,5 +244,56 @@ date_default_timezone_set('Asia/Taipei');
 			else:
 			    return "failed";
 			endif;
+		}
+
+		public function get_schedule_request_ids_with_overdates($current_date){
+			$this->db->select("make_up_requests.request_id, schedule.start_time, make_up_requests.request_date");
+			$this->db->from("schedule");
+			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id");
+			$this->db->where("make_up_requests.request_date < ", $current_date);
+			$q = $this->db->get();
+			return $q->result();
+		}
+
+		// 04/19/2020
+		public function check_logs_for_insert($current_date){
+			$this->db->select("*");
+			$this->db->from("logs");
+			$this->db->join("schedule", "logs.schedule_id = schedule.schedule_id");
+			$this->db->where("logs.log_date = ", $current_date);
+			$this->db->where("logs.attendance_id = 0");
+			$this->db->where("logs.time_in IS NULL");
+			$this->db->order_by("schedule.start_time");
+
+			$q = $this->db->get();
+
+			if ($q->num_rows() > 0)
+			{
+				$row = $q->row(); 
+				return $row;
+			}
+
+			return null;
+		}
+
+		// 04/19/2020
+		public function check_logs_for_time_out($rfid_id, $person_id, $date){
+			$this->db->select("*");
+			$this->db->from("logs");
+			$this->db->where("rfid_id = ", $rfid_id);
+			$this->db->where("person_id = ", $person_id);
+			$this->db->where("log_date = ", $date);
+			$this->db->where("time_in IS NOT NULL");
+			$this->db->where("time_out IS NULL");
+			$this->db->order_by("time_in", "desc");
+			$q = $this->db->get();
+
+			if ($q->num_rows() > 0)
+			{
+				$row = $q->row(); 
+				return $row;
+			}
+
+			return null;
 		}
 	}

@@ -1,6 +1,6 @@
 		<footer class="footer">
 			<div class="container text-center">
-				<span class="footer-copyright">Copyright &copy; <?= date('Y') ?> UST IICS. All Rights Reserved.</span>
+				<span class="footer-copyright">Copyright &copy; <?= date('Y') ?> UST IICS. All Rights Reserved. <a href="https://www.termsfeed.com/privacy-policy/3f1a524a3bfb1f9413d4d826536b0390" target="_blank">Privacy Policy.</a> </span>
 			</div>
 		</footer>
 
@@ -58,17 +58,38 @@
 					});
 				}
 
-				// check_incoming_rfid();
+				function check_request_date()
+				{
+					$.ajax({
+						url:"<?=base_url()?>ajax/check-request-date",
+						method:"POST",
+						success:function(data)
+						{
+							console.log(data);
+						},
+						error:function(req, status, error)
+						{
+							console.log("req: " + req);
+							console.log("status: " + status);
+							console.log("error: " + error);
+						}
+					});
+				}
+
+				check_incoming_rfid();
+				//check_request_date();
 
 
-				// $(document).on('click', '.dropdown-toggle', function(){
-				// 	$('.count').html('');
-				// 	check_incoming_rfid('yes');
-				// });
+				$(document).on('click', '.dropdown-toggle', function(){
+					$('.count').html('');
+					check_incoming_rfid('yes');
+					//check_request_date();
+				});
 
-				// setInterval(function(){ 
-				// 	check_incoming_rfid();
-				// }, 1500);
+				setInterval(function(){ 
+					check_incoming_rfid();
+					//check_request_date();
+				}, 1500);
 
 			});
 		</script>

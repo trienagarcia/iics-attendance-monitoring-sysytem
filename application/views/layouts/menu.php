@@ -41,17 +41,11 @@
 			</li>
 			<?php $position_id = $this->session->userdata('position_Id');
 			 	if ($position_id == 1) { ?>
-				<li id="make-report" class="nav-item">
-					<a class="nav-link nav-color" href="<?=base_url()?>room-schedule">Room Attendance</a>
+				<li id="submitted-reports" class="nav-item">
+					<a class="nav-link nav-color" href="<?=base_url()?>view-request">Requests</a>
 				</li>
 				<li id="submitted-reports" class="nav-item">
-					<a class="nav-link nav-color" href="#">Schedule</a>
-				</li>
-				<li id="submitted-reports" class="nav-item">
-					<a class="nav-link nav-color" href="<?=base_url()?>view-request">View Request</a>
-				</li>
-				<li id="submitted-reports" class="nav-item">
-					<a class="nav-link nav-color" href="<?=base_url()?>substitute">Substitute</a>
+					<a class="nav-link nav-color" href="<?=base_url()?>substitute">Schedule</a>
 				</li>
 				<li id="time-logs" class="nav-item">
 					<a class="nav-link nav-color" href="<?=base_url()?>time-logs">Time Logs</a>

@@ -204,9 +204,20 @@ class CustomController extends CI_Controller
                     $person_id = $rfid->person_id;
                     $current_date = date('Y-m-d');
                     $current_datetime = date('Y-m-d h:i:s');
+                    $current_time = date('h:i:s');
 
-                    //Check logs if it's existing
-                    $rfid_logs = $this->Custom_model->get_logs($rfid->rfid_id, $person_id, $current_date);
+                    $welcome_title = "Signing";
+
+                    //Check rfid if it's existing
+                    // start change - 4/19/2020
+                    // $rfid_logs = $this->Custom_model->get_logs($rfid->rfid_id, $person_id, $current_date);
+
+                    // check LOGS if it's existing
+                    $rfid_logs = $this->Custom_model->check_logs_for_time_out($rfid->rfid_id, $person_id, $current_date);
+
+
+                    // echo 'last query: ' . $this->db->last_query() . '<br>rfid_logs: ' . $rfid_logs . '<br>';
+
                     $table = 'logs';
                     $errors = '';
                     if($rfid_logs) {
@@ -219,22 +230,30 @@ class CustomController extends CI_Controller
 
                         if($response === "failed") {
                             $errors = "Update logs Failed";
-                        }
+                        }                               
                     }else{
-                        $data = array(
-                            'person_id' => $person_id,
-                            'rfid_id' => $rfid->rfid_id,
-                            'log_date' => $current_date,
-                            'attendance_id' => 1,
-                        );
-                        $logs_insert = $this->Global_model->insert_data('logs', $data);
-                        $welcome_title = "Signing On";
 
-                        if($logs_insert === "failed") {
-                            $errors = "Insert logs Failed";
+                        $rfid_logs_new = $this->Custom_model->check_logs_for_insert($current_date);
+
+                        if($rfid_logs_new) {
+                            $data = array(
+                                'rfid_id' => $rfid->rfid_id,
+                                'attendance_id' => 1,
+                                'time_in' => $current_datetime
+                            );
+                            $field = 'logs_id';
+                            $where = $rfid_logs_new->logs_id;
+                            $logs_update = $this->Global_model->update_data($table, $data, $field, $where);
+                            $welcome_title = "Signing On";
+
+                            if($logs_update === "failed") {
+                                $errors = "Update Insert logs Failed";
+                            }
                         }
 
                     }
+
+                    // echo 'last query: ' . $this->db->last_query() . '<br>rfid_logs: ' . $rfid_logs . '<br>';
 
                     echo json_encode(array('success' => true, 
                                             'message' => $welcome_title, 
@@ -698,6 +717,8 @@ class CustomController extends CI_Controller
         );
         $field = 'schedule_id';
         $where = $this->input->post('schedule_id');
+
+        
         return $this->Global_model->update_data($table, $data, $field, $where);
 
     }
@@ -726,3 +747,45 @@ class CustomController extends CI_Controller
         // echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NONE&nbsp;&nbsp;&nbsp;<br>';
         return 300;
     }
+
+    public function checkRequestDate() {
+        $current_date = date('Y-m-d');
+        $current_time = date('h:i:s');
+        $current_datetime = new DateTime();
+
+        $result = $this->Custom_model->get_schedule_request_ids_with_overdates($current_date);
+
+        // print("&nbsp;&nbsp;result: <br><pre>".print_r($result,true)."</pre>");
+
+        // echo '&nbsp;&nbsp;last query: ' . $this->db->last_query();
+        if(!empty($result)) {
+            $table = 'make_up_requests';
+            $field = 'request_id';
+
+            foreach($result as $value) {
+
+                $datetime = new DateTime($value->request_date . ' ' . $value->start_time);
+
+                // echo 'current time: ' . $current_datetime->format('Y-m-d h:i:s') . "<br>";
+                // echo 'start_time: ' . $datetime->format('Y-m-d h:i:s') . "<br>";
+
+                if($current_datetime > $datetime) {
+                    $where = $value->request_id;
+
+                    // echo "  where " . $where . "<br>";
+                    $response = $this->Global_model->delete_data($table, $field, $where);
+                }
+
+                
+            }
+            
+            print_r(json_encode("success"));
+        }
+
+
+        print_r(json_encode("none"));
+    }
+
+
+
+}
