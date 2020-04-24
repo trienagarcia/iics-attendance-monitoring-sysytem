@@ -13,6 +13,7 @@
 			<table id="table-submitted-reports" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
 					<tr>
+						<th>Date</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Course</th>
@@ -26,6 +27,7 @@
 				</thead>
 				<tfoot>
 					<tr>
+						<th>Date</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Course</th>
@@ -75,6 +77,7 @@
 				responsive:true,
 				"order" : [[ 0, "desc" ]],
 				columns : [
+				{ data: 'log_date', width: '15%' },
 				{ data : 'first_name'},
 				{ data : 'last_name'},
 				{ data : 'course_code' },

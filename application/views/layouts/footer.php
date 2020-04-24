@@ -76,8 +76,27 @@
 					});
 				}
 
+				function check_grace_period_before_absent()
+				{
+					$.ajax({
+						url:"<?=base_url()?>ajax/check-grace-period",
+						method:"POST",
+						success:function(data)
+						{
+							console.log(data);
+						},
+						error:function(req, status, error)
+						{
+							console.log("req: " + req);
+							console.log("status: " + status);
+							console.log("error: " + error);
+						}
+					});
+				}
+
 				check_incoming_rfid();
 				//check_request_date();
+				check_grace_period_before_absent();
 
 
 				$(document).on('click', '.dropdown-toggle', function(){
@@ -88,8 +107,13 @@
 
 				setInterval(function(){ 
 					check_incoming_rfid();
-					//check_request_date();
+					check_request_date();
 				}, 1500);
+
+
+				setInterval(function(){
+					check_grace_period_before_absent();
+				}, 120000)
 
 			});
 		</script>

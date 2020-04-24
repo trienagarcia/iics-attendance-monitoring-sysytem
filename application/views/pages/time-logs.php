@@ -40,7 +40,7 @@
 			<table id="table-submitted-reports" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<th>Schedule ID</th>
+						<th>Date</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Course</th>
@@ -54,7 +54,7 @@
 				</thead>
 				<tfoot>
 					<tr>
-						<th>Schedule ID</th>
+						<th>Date</th>
 						<th>First Name</th>
 						<th>Last Name</th>
 						<th>Course</th>
@@ -128,7 +128,7 @@
 			"order": [[ 0, "desc" ]],
 			columns: [
 				// logs.attendance_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
-				{ data: 'schedule_id' },
+				{ data: 'log_date', width: '15%' },
 				{ data: 'first_name' },
 				{ data: 'last_name' },
 				{ data: 'course_code' },
@@ -169,6 +169,7 @@
 				"order": [[ 0, "desc" ]],
 				columns: [
 					// log.attendance_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance_name
+					{ data: 'log_date', width: '15%' },
 					{ data: 'first_name'},
 					{ data: 'last_name'},
 					{ data: 'course_code' },

@@ -61,9 +61,13 @@
 						</div>
 						<div class="form-group">
 							<div class="row">
-								<div class="col-md-12">
-									<div class="label-input">Faculty Name <span class="required">*</span></div>
-									<input type="text" class="form-control form-input" id="name" name="name">
+								<div class="col-md-6">
+									<div class="label-input">First Name <span class="required">*</span></div>
+									<input type="text" class="form-control form-input" id="fname" name="fname">
+								</div>
+								<div class="col-md-6">
+									<div class="label-input">Last Name <span class="required">*</span></div>
+									<input type="text" class="form-control form-input" id="lname" name="lname">
 								</div>
 							</div>
 						</div>
@@ -170,7 +174,8 @@
 			$('#add-account-modal').modal('show');
 			$("#email").val('');
 			$("#faculty_number").val('');
-			$("#name").val('');
+			$("#fname").val('');
+			$("#lname").val('');
 			$("#rfid").val('');
 			$("#courses").val('');
 			$.ajax({
@@ -190,7 +195,8 @@
                 type: 'POST',
                 data: {
                 	email: $('#email').val(),
-                	name : $('#name').val(),
+                	fname : $('#fname').val(),
+                	lname : $('#lname').val(),
                 	password: $('#pword').val(),
                 	faculty_number : $('#faculty_number').val(),
                 	course: $('#courses').val(),

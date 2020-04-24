@@ -49,7 +49,8 @@ class CustomController extends CI_Controller
         $data = array(
             'email' => $this->input->post('email'),
             'password' => sha1($this->input->post('password')),
-            'name' => $this->input->post('name'),
+            'first_name' => $this->input->post('fname'),
+            'last_name' => $this->input->post('lname'),
             'position_Id' => '2',
             'rfid_id' => $this->input->post('rfid'),
             'person_number' => $this->input->post('faculty_number')
@@ -362,6 +363,15 @@ class CustomController extends CI_Controller
         return $this->Global_model->update_data($table, $data, $field, $where);
     }
 
+    public function getAllSchedule() {
+        $date = date('Y-m-d');
+        $result = $this->Custom_model->get_all_schedule();
+
+        // print("<pre>".print_r($result,true)."</pre>");
+
+        print_r(json_encode($result));
+    }
+
     private function getAllApprovedSchedules() {
         $result = $this->Custom_model->get_all_approved_schedules();
         print_r(json_encode($result));
@@ -405,7 +415,7 @@ class CustomController extends CI_Controller
         if (!empty($this->input->get('sch_date'))) {
             $date = $this->input->get('sch_date');
             $timestamp = strtotime($date);
-            $day = intval(date('w', $timestamp)) + 1;
+            $day = intval(date('w', $timestamp));
         }else{
             $timestamp = strtotime(date("Y-m-d", strtotime('tomorrow')));
             $day = intval(date('w', $timestamp)) + 1;
@@ -711,15 +721,22 @@ class CustomController extends CI_Controller
 
     // annthonite
     public function updateScheduleSubstitute() {
-        $table = 'schedule';
+        $table1 = 'schedule';
+        $table2 = 'logs';
         $data = array(
+            'person_id' => $this->input->post('person_id')
+        );
+
+        $data2 = array(
             'person_id' => $this->input->post('person_id')
         );
         $field = 'schedule_id';
         $where = $this->input->post('schedule_id');
 
+        $schedule_response = $this->Global_model->update_data($table1, $data, $field, $where);
+        $logs_response = $this->Global_model->update_data($table2, $data2, $field, $where);
         
-        return $this->Global_model->update_data($table, $data, $field, $where);
+        return $schedule_response && $logs_response;
 
     }
 
@@ -761,6 +778,7 @@ class CustomController extends CI_Controller
         if(!empty($result)) {
             $table = 'make_up_requests';
             $field = 'request_id';
+            
 
             foreach($result as $value) {
 
@@ -769,11 +787,21 @@ class CustomController extends CI_Controller
                 // echo 'current time: ' . $current_datetime->format('Y-m-d h:i:s') . "<br>";
                 // echo 'start_time: ' . $datetime->format('Y-m-d h:i:s') . "<br>";
 
+                // overlapped dates
                 if($current_datetime > $datetime) {
                     $where = $value->request_id;
 
-                    // echo "  where " . $where . "<br>";
-                    $response = $this->Global_model->delete_data($table, $field, $where);
+                    if($value->status_id == "1") {
+                        // echo "  where " . $where . "<br>";
+                        $data = array('status_id' => 3);
+                        $response = $this->Global_model->update_data($table, $data, $field, $where);
+                    }
+                    else if($value->status_id == "2") {
+                        $data = array('status_id' => 4);
+                        $response = $this->Global_model->update_data($table, $data, $field, $where);
+                    }
+
+                    
                 }
 
                 
@@ -785,6 +813,55 @@ class CustomController extends CI_Controller
 
         print_r(json_encode("none"));
     }
+
+
+     public function checkGracePeriod() {
+        $current_date = date('Y-m-d');
+        $current_time = date('h:i:s');
+        $current_datetime = new DateTime();
+        $GRACE_IN_MINUTES = 15;
+        $GRACE_IN_SECS = 900;
+        $response = 'none';
+
+        $where = 'logs.attendance_id = 0 AND logs.log_date <= ';
+        $join = array("table" => "schedule", "query" => "schedule.schedule_id = logs.schedule_id", "type" => "inner");
+
+        $results = $this->Global_model->get_data_with_join('logs', 'logs.logs_id, logs.log_date, schedule.start_time', $where, $current_date, $join);
+        $table = 'logs';
+        $field = 'logs_id';
+        $data = array( 'attendance_id' => 2, 'remarks' => 'Surpassed 15 minute grace period.' );
+
+        print_r($results);
+
+        foreach($results as $value) {
+            $where_value = $value->logs_id;
+
+            if( $value->log_date < $current_date ) {
+                // echo '<br>first if where: ' . $where_value;
+                // response
+                $response = $this->Global_model->update_data($table, $data, $field, $where_value);
+            }
+            // equal
+            else {
+                $current_timestamp = strtotime($current_time);
+                $start_time = strtotime($value->start_time);
+                $diff = $current_timestamp - $start_time;
+                // echo '<br>dddddddiff: ' . $diff;
+                if( $diff >= $GRACE_IN_SECS ) {
+                    
+                    // echo '<br>eeeeeeeeeeelse where: ' . $where_value;
+                    $response = $this->Global_model->update_data($table, $data, $field, $where_value);
+                }
+            }
+
+
+            // date_diff
+        }
+
+        echo '<br>';
+        print_r(json_encode("grace_period_res: " . $response));
+    }
+
 
 
 

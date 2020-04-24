@@ -68,24 +68,7 @@ $route['submit-request'] = 'homeController/submitRequest';
 // 03-20-2020 - E
 
 $route['account-management'] = 'homeController/accountmanagement';
-
 $route['view-request'] = 'homeController/viewRequest'; //annthonite
-
-// Third party controller
-$route['thirdpartycontroller'] = 'thirdPartyController';
-$route['individualreportcontroller'] = 'individualreportcontroller';
-$route['export'] = 'thirdpartycontroller/report';
-$route['individual-export'] = 'individualreportcontroller/index';
-
-$route['compiled-reports/export/(:any)/(:any)'] = 'thirdPartyController/index/$1';
-$route['report/export/(:any)'] = 'individualReportController/index/$1';
-
-// Create Announcements
-$route['announcement/(:any)'] = 'homeController/createannouncement/$1';
-$route['ajax/get-announcement'] = 'customController/getannouncement';
-$route['ajax/get-specific-announcement'] = 'customController/getspecificannouncement';
-$route['ajax/update-announcement'] = 'customController/updateannouncement';
-$route['ajax/delete-announcement'] = 'customController/deleteannouncement';
 
 // Ajax
 
@@ -130,3 +113,6 @@ $route['ajax/update-schedule-substitute'] = 'customController/updateScheduleSubs
 $route['rfid_http_test'] = 'customController/getRfidFromHttpPost';
 $route['ajax/compare-rfid-counter'] = 'customController/checkRFIDTableDifference';
 $route['ajax/check-request-date'] = 'customController/checkRequestDate';
+$route['ajax/check-grace-period'] = 'customController/checkGracePeriod';
+
+$route['ajax/get-all-schedule'] = 'customController/getAllSchedule';

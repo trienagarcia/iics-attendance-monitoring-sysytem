@@ -47,14 +47,12 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
-		function get_data_with_join($table, $select, $query, $join)
+		function get_data_with_join($table, $select, $query, $where_value, $join)
 		{
 			$this->db->select($select);
 			$this->db->from($table);
-			$this->db->where($query);
-			foreach ($join as $key => $vl) {
-					$this->db->join($vl['table'],$vl['query'],$vl['type']);
-			}
+			$this->db->where($query, $where_value);
+			$this->db->join($join['table'],$join['query'],$join['type']);
 			$q = $this->db->get();
 			return $q->result();
 		}

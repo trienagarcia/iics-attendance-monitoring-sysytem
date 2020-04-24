@@ -102,7 +102,7 @@
 		$('#submitted-reports a').addClass('nav-active');
 		logs = $("#table-submitted-reports").DataTable({
 			ajax: {
-				url: "<?=base_url()?>ajax/get-time-logs",
+				url: "<?=base_url()?>ajax/get-all-schedule",
 				type: 'GET',
 				dataSrc: ''
 			},
