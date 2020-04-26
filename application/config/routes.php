@@ -62,7 +62,7 @@ $route['compiled-reports'] = 'homeController/compiledreports';
 $route['report/(:any)'] = 'homeController/getspecificreport/$1';
 $route['add-request'] = 'homeController/addRequests';
 $route['substitute'] = 'homeController/substituteProfessor';
-
+$route['substitute_staff'] = 'homeController/substituteForStaff';
 // 03-20-2020 - S
 $route['submit-request'] = 'homeController/submitRequest';
 // 03-20-2020 - E

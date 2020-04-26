@@ -42,10 +42,20 @@
 			 			<a class="nav-link nav-color" href="<?=base_url()?>time-logs">Time Logs <span class="sr-only">(current)</span></a>
 			 		</li>
 					<li id="submitted-reports" class="nav-item">
-						<a class="nav-link nav-color" href="<?=base_url()?>view-request">Requests</a>
+						<a class="nav-link nav-color" href="<?=base_url()?>substitute">Schedule</a>
 					</li>
 					<li id="submitted-reports" class="nav-item">
-						<a class="nav-link nav-color" href="<?=base_url()?>substitute">Schedule</a>
+						<a class="nav-link nav-color" href="<?=base_url()?>view-request">Requests</a>
+					</li>
+					<li id="account-management" class="nav-item">
+						<a class="nav-link nav-color" href="<?=base_url()?>account-management">Manage Accounts</a>
+					</li>
+			<?php } elseif ( $position_id == 2) { ?>
+					<li id="home" class="nav-item">
+			 			<a class="nav-link nav-color" href="<?=base_url()?>time-logs">Time Logs <span class="sr-only">(current)</span></a>
+			 		</li>
+					<li id="submitted-reports" class="nav-item">
+						<a class="nav-link nav-color" href="<?=base_url()?>substitute_staff">Schedule</a>
 					</li>
 					<li id="account-management" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>account-management">Manage Accounts</a>
@@ -62,8 +72,6 @@
 					</li>
 			<?php } ?>
 		</ul>
-		<?php if($this->session->userdata('position_Id') == 1) {  ?>
-		<?php } ?>
 
 
 		<ul class="navbar-nav">	

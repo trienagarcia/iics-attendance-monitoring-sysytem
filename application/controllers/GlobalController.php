@@ -16,7 +16,7 @@ class GlobalController extends CI_Controller
             $user_info = $this->Global_model->get_data_with_query('person', '*', 'person_id ="' . $login[0]->person_id . '"');
             $this->session->set_userdata((array) ($login[0]));
             
-            if($this->session->position_Id == 1) {
+            if($this->session->position_Id == 1 || $this->session->position_Id == 2) {
                 echo json_encode(array('success' => true, 'message' => base_url().'time-logs'));
             }else{
                 echo json_encode(array('success' => true, 'message' => base_url().'time-logs-user'));
