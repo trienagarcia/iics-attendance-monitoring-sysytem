@@ -150,7 +150,7 @@ date_default_timezone_set('Asia/Taipei');
 		// annthonite
 		public function get_filtered_time_logs() {
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, 
-				make_up_requests.request_date");
+				make_up_requests.request_date, logs.log_date");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("logs", "logs.schedule_id = schedule.schedule_id");

@@ -156,6 +156,7 @@
 
 		// annthonite
 		function getFilteredTimeLogs(iProfessorID, sDate) {
+			iProfessorID = iProfessorID !== null ? iProfessorID : "";
 			var sData = "person_id=" + iProfessorID + "&log_date=" + sDate;
 			var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
 			logs.destroy();
