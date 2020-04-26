@@ -95,14 +95,14 @@
 				}
 
 				check_incoming_rfid();
-				//check_request_date();
+				check_request_date();
 				check_grace_period_before_absent();
 
 
 				$(document).on('click', '.dropdown-toggle', function(){
 					$('.count').html('');
 					check_incoming_rfid('yes');
-					//check_request_date();
+					check_request_date();
 				});
 
 				setInterval(function(){ 

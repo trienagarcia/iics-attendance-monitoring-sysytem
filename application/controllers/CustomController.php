@@ -772,7 +772,7 @@ class CustomController extends CI_Controller
 
         $result = $this->Custom_model->get_schedule_request_ids_with_overdates($current_date);
 
-        // print("&nbsp;&nbsp;result: <br><pre>".print_r($result,true)."</pre>");
+        print("&nbsp;&nbsp;result: <br><pre>".print_r($result,true)."</pre>");
 
         // echo '&nbsp;&nbsp;last query: ' . $this->db->last_query();
         if(!empty($result)) {

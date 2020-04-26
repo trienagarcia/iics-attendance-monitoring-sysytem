@@ -7,7 +7,7 @@ date_default_timezone_set('Asia/Taipei');
 					$this->db->select("*");
 					$this->db->from("person");
 					$this->db->join("rfid", "person.rfid_id = rfid.rfid_id");
-					$this->db->join("person_position", "person.position_Id = person_position.position_id AND person.position_Id = 2");
+					$this->db->join("person_position", "person.position_Id = person_position.position_id AND person.position_Id = 3");
 					$q = $this->db->get();
 					return $q->result();
 		}
@@ -107,7 +107,7 @@ date_default_timezone_set('Asia/Taipei');
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", 
 				"schedule.schedule_id = make_up_requests.schedule_id 
-				AND make_up_requests.status_id IN (2,4)", "left");
+				AND make_up_requests.status_id IN (2)", "left");
 			// ADD and date
 			$q = $this->db->get();
 			return $q->result();
@@ -276,7 +276,7 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->select("make_up_requests.request_id, schedule.start_time, make_up_requests.request_date, make_up_requests.status_id");
 			$this->db->from("schedule");
 			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id");
-			$this->db->where("make_up_requests.request_date < ", $current_date);
+			$this->db->where("make_up_requests.request_date <= ", $current_date);
 			$q = $this->db->get();
 			return $q->result();
 		}
