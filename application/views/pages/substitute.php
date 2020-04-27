@@ -98,8 +98,8 @@
 			getFilteredTimeLogs($('#professor').val());
 		});
 		
-		$('#submitted-reports a').removeClass('nav-color');
-		$('#submitted-reports a').addClass('nav-active');
+		$('#schedule a').removeClass('nav-color');
+		$('#schedule a').addClass('nav-active');
 		logs = $("#table-submitted-reports").DataTable({
 			ajax: {
 				url: "<?=base_url()?>ajax/get-all-schedule",
@@ -189,7 +189,7 @@
 		// annthonite
 		function getFilteredTimeLogs(iProfessorID) {
 			var sData = "person_id=" + iProfessorID;
-			var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
+			var sUrl = "<?=base_url()?>ajax/get-filtered-schedule?" + sData;
 			logs.destroy();
 			logs = $("#table-submitted-reports").DataTable({
 				ajax: {

@@ -113,6 +113,26 @@ date_default_timezone_set('Asia/Taipei');
 			return $q->result();
 		}
 
+		public function get_filtered_schedule() {
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, make_up_requests.request_date");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->join("course", "course.course_id = schedule.course_id");
+			$this->db->join("sections", "sections.section_id = schedule.section_id");			
+			// add - 04/14 - add make up requests date
+			$this->db->join("make_up_requests", 
+				"schedule.schedule_id = make_up_requests.schedule_id 
+				AND make_up_requests.status_id IN (2)", "left");
+
+			if (!empty($this->input->get('person_id'))) {
+				$this->db->where("person.person_id = ", $this->input->get('person_id'));
+			}
+
+			$q = $this->db->get();
+			return $q->result();
+		}
+
 		// INSERT INTO `logs` (person_id, log_date) Select person_id, now() from `schedule` s where s.day = DAYOFWEEK(now())
 		// Select * from `logs` log INNER JOIN `schedule` s ON log.schedule_id = s.schedule_id where log.attendance_id = 0 and log.log_date = CURRENT_DATE ORDER BY s.start_time
 		/*
@@ -212,6 +232,7 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->select("*");
 			$this->db->from("schedule");
 			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->join("make_up_requests", "make_up_requests.schedule_id = schedule.schedule_id AND make_up_requests.status_id = 2", "left");
 			$this->db->where("schedule.day = ", $day);
 			$q = $this->db->get();
 			return $q->result();

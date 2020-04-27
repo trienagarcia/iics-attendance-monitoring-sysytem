@@ -152,8 +152,8 @@
 <script>
 	var requests;
 	$(document).ready(function() {
-		$('#submitted-requests a').removeClass('nav-color');
-		$('#submitted-requests a').addClass('nav-active');
+		$('#my-requests a').removeClass('nav-color');
+		$('#my-requests a').addClass('nav-active');
 
 			requests = $("#table-submitted-requests").DataTable({
 				ajax: {

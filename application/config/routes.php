@@ -116,3 +116,4 @@ $route['ajax/check-request-date'] = 'customController/checkRequestDate';
 $route['ajax/check-grace-period'] = 'customController/checkGracePeriod';
 
 $route['ajax/get-all-schedule'] = 'customController/getAllSchedule';
+$route['ajax/get-filtered-schedule'] = 'customController/getFilteredSchedule';

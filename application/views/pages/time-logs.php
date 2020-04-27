@@ -116,8 +116,8 @@
 			},
 		});
 		
-		$('#submitted-reports a').removeClass('nav-color');
-		$('#submitted-reports a').addClass('nav-active');
+		$('#home a').removeClass('nav-color');
+		$('#home a').addClass('nav-active');
 		logs = $("#table-submitted-reports").DataTable({
 			ajax: {
 				url: "<?=base_url()?>ajax/get-time-logs",

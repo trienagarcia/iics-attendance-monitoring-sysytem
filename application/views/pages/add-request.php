@@ -50,6 +50,9 @@
 
 <!-- SCRIPTS -->
 		<script>
+			$('#add-request a').removeClass('nav-color');
+			$('#add-request a').addClass('nav-active');
+
 			// annthonite
 			$('#inputDate').datepicker({
 				minDate     : new Date(),

@@ -48,8 +48,8 @@
 </div>
 
 <script>
-		$('#submitted-reports a').removeClass('nav-color');
-		$('#submitted-reports a').addClass('nav-active');
+		$('#home a').removeClass('nav-color');
+		$('#home a').addClass('nav-active');
 
 		// annthonite
 		var logs = $("#table-submitted-reports").DataTable(getUserTimeLogs(''));

@@ -41,10 +41,10 @@
 			 		<li id="home" class="nav-item">
 			 			<a class="nav-link nav-color" href="<?=base_url()?>time-logs">Time Logs <span class="sr-only">(current)</span></a>
 			 		</li>
-					<li id="submitted-reports" class="nav-item">
+					<li id="schedule" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>substitute">Schedule</a>
 					</li>
-					<li id="submitted-reports" class="nav-item">
+					<li id="requests" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>view-request">Requests</a>
 					</li>
 					<li id="account-management" class="nav-item">
@@ -54,20 +54,20 @@
 					<li id="home" class="nav-item">
 			 			<a class="nav-link nav-color" href="<?=base_url()?>time-logs">Time Logs <span class="sr-only">(current)</span></a>
 			 		</li>
-					<li id="submitted-reports" class="nav-item">
+					<li id="schedule" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>substitute_staff">Schedule</a>
 					</li>
 					<li id="account-management" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>account-management">Manage Accounts</a>
 					</li>
-			<?php } elseif ( $position_id == 2) { ?>
+			<?php } elseif ( $position_id == 3) { ?>
 					<li id="home" class="nav-item">
 				 		<a class="nav-link nav-color" href="<?=base_url()?>time-logs-user">My Time Logs <span class="sr-only">(current)</span></a>
 				 	</li>
-					<li id="submitted-reports" class="nav-item">
+					<li id="add-request" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>add-request">Add Make Up Request</a>
 					</li>
-					<li id="submitted-reports" class="nav-item">
+					<li id="my-requests" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>submitted-requests">My Requests</a>
 					</li>
 			<?php } ?>

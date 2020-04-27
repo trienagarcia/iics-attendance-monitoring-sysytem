@@ -63,6 +63,10 @@
 
 <!-- annthonite -->
 <script>
+
+$('#view-requests a').removeClass('nav-color');
+$('#view-requests a').addClass('nav-active');
+
 var requests = $("#table-submitted-requests").DataTable({
     ajax : {
         url     : "<?=base_url()?>ajax/get-requests",

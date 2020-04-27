@@ -96,9 +96,8 @@
 			getFilteredTimeLogs($('#professor').val());
 		});
 		
-		$('#submitted-reports a').removeClass('nav-color');
-		$('#submitted-reports a').addClass('nav-active');
-
+		$('#schedule a').removeClass('nav-color');
+		$('#schedule a').addClass('nav-active');
 		logs = $("#table-submitted-reports").DataTable({
 			ajax: {
 				url: "<?=base_url()?>ajax/get-all-schedule",
@@ -116,7 +115,7 @@
 				{ data: 'room_number' },
 				{ data: 'start_time' },
 				{ data: 'end_time' },
-				{ data: 'request_date' },
+				{ data: 'request_date' }
 			]
 		});
 
@@ -125,9 +124,64 @@
 		// }, 2000 );
 
 		// annthonite
+		$(document).on('click', '#btnUpdateSubstitute', function (event) {
+			var modal = $('#dynamicModal');
+			var sBody = `
+				<select class="form-control" name="substitute" id="changeSubstitute" data-parsley-required="true">
+					<?php
+						echo '<option disabled selected></option>';
+						foreach ($faculty as $f) {
+							echo '<option scheduleID="` + $(this).attr("scheduleID") + `" personID="'.$f['person_id'].'">'.$f['first_name']. ' ' . $f['last_name'] . '</option>';	
+						}
+					?>
+		        </select>
+			`;
+
+			modal.find('.modal-title').text('Change Substitute');
+			modal.find('.modal-body').html(sBody);
+			modal.modal('show');
+		});
+
+		// annthonite
+		$(document).on('click', '#saveSubstituteBtn', function () {
+			var iPersonID = $( "#changeSubstitute option:selected" ).attr('personID');
+			var iScheduleID = $( "#changeSubstitute option:selected" ).attr('scheduleID');
+
+			if (iPersonID !== undefined || iScheduleID !== undefined) {
+				$( "#changeSubstitute").removeClass('is-invalid');
+				updateSubstitute(iPersonID, iScheduleID);
+			} else {
+				$( "#changeSubstitute").addClass('is-invalid');
+			}
+		});
+
+		// annthonite
+		function updateSubstitute(iPersonID, iScheduleID) {
+			var sUrl = "<?=base_url()?>ajax/update-schedule-substitute";
+			var oData = {
+				'person_id'   : iPersonID,
+				'schedule_id' : iScheduleID
+			}
+
+			$.ajax({
+				url     : sUrl,
+				type    : 'POST',
+				data    : oData,
+				success : function(mData) {
+					$('#dynamicModal').modal('hide');
+					logs.ajax.reload();
+				},
+				error   : function (mData) {
+					$('#dynamicModal').modal('hide');
+					alert('Error occured!');
+				}
+			});
+		}
+
+		// annthonite
 		function getFilteredTimeLogs(iProfessorID) {
 			var sData = "person_id=" + iProfessorID;
-			var sUrl = "<?=base_url()?>ajax/get-filter-time-logs?" + sData;
+			var sUrl = "<?=base_url()?>ajax/get-filtered-schedule?" + sData;
 			logs.destroy();
 			logs = $("#table-submitted-reports").DataTable({
 				ajax: {
@@ -145,14 +199,7 @@
 					{ data: 'room_number' },
 					{ data: 'start_time' },
 					{ data: 'end_time' },
-					{ data: 'request_date' },
-					{ render: function ( data, type, row, meta ) {
-							var sRemarks = row['remarks'] === null ? '' : row['remarks'];
-							return `
-								<button class='btn btn-info btn-sm btn-info' id='btnUpdateSubstitute' scheduleID='` + row['schedule_id'] + `' personID='` + row['person_id'] + `' style="margin-top:5px">Substitute</button>
-							`;
-						}
-					}
+					{ data: 'request_date' }
 				],
 				columnDefs: []
 			});

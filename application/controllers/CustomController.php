@@ -340,6 +340,12 @@ class CustomController extends CI_Controller
         print_r(json_encode($aResult));
     }
 
+    public function getFilteredSchedule() {
+        $aResult = $this->Custom_model->get_filtered_schedule();
+
+        print_r(json_encode($aResult));
+    }
+
     // annthonite
     public function updateLogs() { 
         $table = 'logs';
@@ -415,7 +421,7 @@ class CustomController extends CI_Controller
         if (!empty($this->input->get('sch_date'))) {
             $date = $this->input->get('sch_date');
             $timestamp = strtotime($date);
-            $day = intval(date('w', $timestamp));
+            $day = intval(date('w', $timestamp)) + 1;
         }else{
             $timestamp = strtotime(date("Y-m-d", strtotime('tomorrow')));
             $day = intval(date('w', $timestamp)) + 1;
@@ -427,10 +433,18 @@ class CustomController extends CI_Controller
             $interval = 1;
         }
 
+
+        // echo '<br>ddddddate: ' . $date;
+        // echo '<br>day: ' . $day;
+        // echo '<br>iiiiiinterval: ' . $interval;
+
         $result = $this->Custom_model->get_schedules( $day );
+
+        // echo '<br>last query: ' . $this->db->last_query();
         $rooms = $this->getUniqueRooms($result);
 
-        // print("<pre>".print_r($rooms,true)."</pre>");
+        // print("<pre>".print_r($result,true)."</pre>");
+
         $final_schedule = array();
         
         $i = 0;

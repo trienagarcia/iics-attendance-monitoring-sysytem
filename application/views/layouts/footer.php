@@ -65,7 +65,7 @@
 						method:"POST",
 						success:function(data)
 						{
-							console.log(data);
+							// console.log(data);
 						},
 						error:function(req, status, error)
 						{
@@ -83,7 +83,7 @@
 						method:"POST",
 						success:function(data)
 						{
-							console.log(data);
+							// console.log(data);
 						},
 						error:function(req, status, error)
 						{
