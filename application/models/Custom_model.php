@@ -156,8 +156,8 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");			
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id", "left");
-			$this->db->where("person.person_id = ", $this->session->userdata('person_id'));
-			$this->db->group_by("schedule.schedule_id");
+			$this->db->where("logs.person_id = ", $this->session->userdata('person_id'));
+			// $this->db->group_by("schedule.schedule_id");
 
 			// annthonite
 			if (!empty($this->input->get('date'))) {

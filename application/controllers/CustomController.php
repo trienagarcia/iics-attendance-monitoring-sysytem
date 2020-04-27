@@ -324,6 +324,8 @@ class CustomController extends CI_Controller
 
     public function getUserTimeLogs() {
         $result = $this->Custom_model->get_all_user_time_logs();
+        // echo '<br>last query: ' . $this->db->last_query();
+        // print("<pre>".print_r($result,true)."</pre>");
         print_r(json_encode($result));
     }
 
