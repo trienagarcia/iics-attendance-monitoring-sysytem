@@ -12,7 +12,7 @@
 				<div class=""></div>
 				<div class="label-input">Professors</div>
 				<select class="form-control" name="professor" id="professor" data-parsley-required="true">
-					<option disabled selected></option>
+					<option value="" selected></option>
 					<?php
 					foreach ($faculty as $f) {
 						echo '<option value="'.$f['person_id'].'">'.$f['first_name']. ' ' . $f['last_name'] . '</option>';
