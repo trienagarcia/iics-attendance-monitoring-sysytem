@@ -12,7 +12,7 @@
 				<div class=""></div>
 				<div class="label-input">Professors</div>
 				<select class="form-control" name="professor" id="professor" data-parsley-required="true">
-					<option disabled selected></option>
+					<option value="" selected></option>
 					<?php
 					foreach ($faculty as $f) {
 						echo '<option value="'.$f['person_id'].'">'.$f['first_name']. ' ' . $f['last_name'] . '</option>';
@@ -23,6 +23,7 @@
 			<div class="col">
 				<div class="label-input">Date</div>
 				<input class="form-control" id="date_picker" name="date_picker">
+				<span id="date_picker" class="glyphicon glyphicon-remove-circle"></span>
 			</div>
 		<!-- annthonite -->
 		</div>
@@ -106,13 +107,22 @@
 		});
 		
 		// annthonite
+		var sSelectedDate = '';
 		$('#date_picker').datepicker({
 			maxDate: '0',
 			dateFormat: 'yy-mm-dd',
 			changeMonth: true,
 			changeYear: true,
+			clearBtn: true,
 			onSelect: function(sDate) {
-				getFilteredTimeLogs($('#professor').val(), sDate);
+				if (sSelectedDate === sDate) {
+					$(this).val('');
+					sSelectedDate = '';
+					getFilteredTimeLogs($('#professor').val(), '');	
+				} else {
+					sSelectedDate = sDate;
+					getFilteredTimeLogs($('#professor').val(), sDate);	
+				}
 			},
 		});
 		
