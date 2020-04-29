@@ -4,7 +4,7 @@
 			</div>
 		</footer>
 
-		<?php if($this->session->userdata('start_rfid')) { ?>
+<!-- 		<?php// if($this->session->userdata('start_rfid')) { ?> -->
 			<script>
 			$(document).ready(function(){
 
@@ -119,7 +119,7 @@
 		</script>
 
 		
-	<?php } $this->session->set_userdata('start_rfid', 'yes'); ?>
+	<!-- <?php }.// $this->session->set_userdata('start_rfid', 'yes'); ?> -->
 
 	<div class="modal fade modal-fade-in-scale-up" id="rfid-alert" aria-hidden="true" aria-labelledby="exampleModalTitle"
 	 role="dialog" tabindex="-1">
