@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 15, 2020 at 04:48 AM
+-- Generation Time: May 09, 2020 at 07:03 AM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.1.26
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `attendance_monitoring`
+-- Database: `id13604405_attendance_moitoring`
 --
 
 -- --------------------------------------------------------
@@ -38,6 +38,7 @@ CREATE TABLE `attendance` (
 --
 
 INSERT INTO `attendance` (`attendance_id`, `attendance_name`) VALUES
+(0, ''),
 (1, 'Present'),
 (2, 'Absent');
 
@@ -71,11 +72,12 @@ INSERT INTO `course` (`course_id`, `course_code`, `course_name`) VALUES
 CREATE TABLE `logs` (
   `logs_id` int(11) NOT NULL,
   `person_id` int(10) NOT NULL,
+  `schedule_id` int(10) NOT NULL,
   `log_date` date DEFAULT NULL,
   `rfid_id` int(5) DEFAULT NULL,
   `attendance_id` int(5) NOT NULL,
-  `time_in` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `time_out` timestamp NULL DEFAULT '0000-00-00 00:00:00',
+  `time_in` timestamp NULL DEFAULT NULL,
+  `time_out` timestamp NULL DEFAULT NULL,
   `remarks` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -83,11 +85,33 @@ CREATE TABLE `logs` (
 -- Dumping data for table `logs`
 --
 
-INSERT INTO `logs` (`logs_id`, `person_id`, `log_date`, `rfid_id`, `attendance_id`, `time_in`, `time_out`, `remarks`) VALUES
-(11, 8, '2019-12-04', 1, 1, '2019-12-03 22:58:22', '2019-12-03 23:59:11', NULL),
-(12, 1, '2019-12-04', 0, 1, '2019-12-03 22:53:14', '2019-12-03 23:13:00', NULL),
-(19, 8, '2019-12-06', 1, 1, '2019-12-05 23:41:58', '2019-12-05 23:43:54', NULL),
-(20, 1, '2019-12-06', 0, 1, '2019-12-05 23:44:10', '2019-12-05 23:44:27', NULL);
+INSERT INTO `logs` (`logs_id`, `person_id`, `schedule_id`, `log_date`, `rfid_id`, `attendance_id`, `time_in`, `time_out`, `remarks`) VALUES
+(55, 11, 7, '2020-04-19', 1, 1, '2020-04-18 23:11:25', '2020-04-18 23:11:34', NULL),
+(56, 8, 8, '2020-04-19', 1, 2, '2020-04-18 22:56:42', '2020-04-18 23:11:15', 'ZXcZxc'),
+(66, 10, 1, '2020-04-24', NULL, 2, NULL, NULL, 'Surpassed 15 minute grace period.'),
+(67, 8, 14, '2020-04-23', 1, 1, '2020-04-23 03:34:01', '2020-04-23 03:34:13', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `make_up_requests`
+--
+
+CREATE TABLE `make_up_requests` (
+  `request_id` int(10) NOT NULL,
+  `schedule_id` int(10) NOT NULL,
+  `status_id` int(3) NOT NULL,
+  `request_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `make_up_requests`
+--
+
+INSERT INTO `make_up_requests` (`request_id`, `schedule_id`, `status_id`, `request_date`) VALUES
+(4, 18, 4, '2020-04-26'),
+(5, 17, 4, '2020-04-21'),
+(6, 19, 4, '2020-04-27');
 
 -- --------------------------------------------------------
 
@@ -113,11 +137,12 @@ CREATE TABLE `person` (
 --
 
 INSERT INTO `person` (`person_id`, `email`, `first_name`, `last_name`, `password`, `position_Id`, `person_number`, `rfid_id`, `created_at`, `updated_at`) VALUES
-(1, 'staff1@iics.ust.edu.ph', 'Staff 1', 'Staff', 'cbb9d0bd363a429d6d4bb85cdf509ee9b53e69fd', 1, 0, 0, '2019-12-01 19:34:09', '2020-02-12 21:20:30'),
-(8, 'user1@gmail.com', 'User 1', 'User', 'b3daa77b4c04a9551b8781d03191fe098f325e67', 2, 12312312, 1, '2019-12-03 00:01:38', '2020-02-12 21:20:26'),
-(10, 'user1@iics.ust.edu.ph', 'asdfasdfasdf', 'wrqewr', '6725c7a24766f2e262239eda538cd0f57f52bb5b', 2, 2147483647, 0, '2019-12-03 00:07:46', '2020-02-15 03:22:55'),
-(11, 'user12@gmail.com', 'sdfsdf', NULL, 'f2e0e4f9007b031a856ccdec30e4daf979be47c5', 2, 123123123, 0, '2019-12-03 00:08:47', '2019-12-03 00:08:47'),
-(13, 'asdfasdf@ust.com', 'sdfsdsdf', NULL, 'a7c10fafbdd94e7ee670ade46375d28721d7e0c1', 2, 1231231321, 0, '2019-12-03 00:14:29', '2019-12-03 00:14:29');
+(1, 'staff1@iics.ust.edu.ph', 'Staff 1', 'Staff', 'cbb9d0bd363a429d6d4bb85cdf509ee9b53e69fd', 2, 342342, 0, '2019-12-01 19:34:09', '2020-04-25 03:48:15'),
+(8, 'user1@gmail.com', 'User 1', 'User', 'b3daa77b4c04a9551b8781d03191fe098f325e67', 3, 12312312, 1, '2019-12-03 00:01:38', '2020-04-25 03:48:19'),
+(10, 'user1@iics.ust.edu.ph', 'asdfasdfasdf', 'wrqewr', '6725c7a24766f2e262239eda538cd0f57f52bb5b', 3, 2147483647, 0, '2019-12-03 00:07:46', '2020-04-25 03:48:31'),
+(11, 'user12@gmail.com', 'sdfsdf', NULL, 'f2e0e4f9007b031a856ccdec30e4daf979be47c5', 3, 123123123, 0, '2019-12-03 00:08:47', '2020-04-25 03:48:34'),
+(15, 'admin.iics@ust.edu.ph', 'admin 1', 'admin', '6c7ca345f63f835cb353ff15bd6c5e052ec08e7a', 1, 1, NULL, '2020-04-25 03:49:43', '2020-04-25 03:49:43'),
+(16, 'user3@gmail.com', 'User3', 'User3', '9d659d4e096559ac2dfd4f771ab06ec0f2c0f0f8', 2, 23423422, 0, '2020-04-26 09:41:52', '2020-04-26 09:41:52');
 
 -- --------------------------------------------------------
 
@@ -135,34 +160,9 @@ CREATE TABLE `person_position` (
 --
 
 INSERT INTO `person_position` (`position_id`, `position`) VALUES
-(1, 'Staff'),
-(2, 'Faculty');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `requests`
---
-
-CREATE TABLE `requests` (
-  `request_id` int(10) NOT NULL,
-  `person_id` int(10) NOT NULL,
-  `request_date` date NOT NULL,
-  `time_from` time NOT NULL,
-  `time_to` time NOT NULL,
-  `course_id` int(10) NOT NULL,
-  `section_id` int(10) NOT NULL,
-  `room_id` int(10) NOT NULL,
-  `status_id` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `requests`
---
-
-INSERT INTO `requests` (`request_id`, `person_id`, `request_date`, `time_from`, `time_to`, `course_id`, `section_id`, `room_id`, `status_id`) VALUES
-(2, 8, '2019-12-09', '07:30:00', '09:30:00', 1, 3, 2, 1),
-(3, 8, '2019-12-10', '01:01:00', '13:00:00', 2, 4, 1, 1);
+(1, 'Admin'),
+(2, 'Staff'),
+(3, 'Faculty');
 
 -- --------------------------------------------------------
 
@@ -182,6 +182,27 @@ CREATE TABLE `rfid` (
 INSERT INTO `rfid` (`rfid_id`, `rfid_data`) VALUES
 (0, 'C679B4F8'),
 (1, '79C8A099');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rfid_counter`
+--
+
+CREATE TABLE `rfid_counter` (
+  `counter_id` int(11) NOT NULL,
+  `rfid_name_1` varchar(100) NOT NULL,
+  `rfid_name_2` varchar(100) NOT NULL,
+  `datetime_1` datetime NOT NULL,
+  `datetime_2` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `rfid_counter`
+--
+
+INSERT INTO `rfid_counter` (`counter_id`, `rfid_name_1`, `rfid_name_2`, `datetime_1`, `datetime_2`) VALUES
+(1, '79C8A099', '79C8A099', '2020-04-11 22:30:31', '2020-04-11 22:30:31');
 
 -- --------------------------------------------------------
 
@@ -217,6 +238,7 @@ CREATE TABLE `schedule` (
   `person_id` int(10) NOT NULL,
   `course_id` int(10) NOT NULL,
   `section_id` int(10) NOT NULL,
+  `type_id` int(10) NOT NULL,
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
   `day` int(1) NOT NULL
@@ -226,10 +248,38 @@ CREATE TABLE `schedule` (
 -- Dumping data for table `schedule`
 --
 
-INSERT INTO `schedule` (`schedule_id`, `room_id`, `person_id`, `course_id`, `section_id`, `start_time`, `end_time`, `day`) VALUES
-(1, 2, 8, 1, 5, '07:00:00', '08:00:00', 3),
-(3, 3, 1, 3, 4, '09:00:00', '11:00:00', 4),
-(4, 1, 10, 1, 1, '01:30:00', '03:30:00', 2);
+INSERT INTO `schedule` (`schedule_id`, `room_id`, `person_id`, `course_id`, `section_id`, `type_id`, `start_time`, `end_time`, `day`) VALUES
+(1, 2, 10, 1, 5, 0, '07:00:00', '08:00:00', 3),
+(3, 3, 10, 3, 4, 0, '09:00:00', '11:00:00', 2),
+(4, 1, 10, 1, 1, 0, '11:30:00', '13:30:00', 2),
+(5, 5, 10, 1, 5, 0, '13:00:00', '14:00:00', 6),
+(7, 5, 11, 2, 4, 2, '16:00:00', '17:00:00', 1),
+(8, 5, 8, 1, 5, 2, '14:00:00', '15:00:00', 1),
+(14, 3, 8, 2, 3, 2, '11:00:00', '13:00:00', 2),
+(15, 3, 10, 1, 1, 2, '16:00:00', '17:00:00', 2),
+(16, 3, 10, 1, 1, 2, '07:00:00', '08:00:00', 2),
+(17, 1, 10, 1, 1, 2, '08:00:00', '09:00:00', 2),
+(18, 5, 10, 3, 4, 2, '09:00:00', '10:00:00', 1),
+(19, 5, 8, 3, 3, 2, '10:00:00', '12:00:00', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `schedule_type`
+--
+
+CREATE TABLE `schedule_type` (
+  `type_id` int(10) NOT NULL,
+  `type_name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `schedule_type`
+--
+
+INSERT INTO `schedule_type` (`type_id`, `type_name`) VALUES
+(1, 'Regular'),
+(2, 'Make Up Class');
 
 -- --------------------------------------------------------
 
@@ -293,7 +343,8 @@ CREATE TABLE `status` (
 INSERT INTO `status` (`status_id`, `status_name`) VALUES
 (1, 'Pending'),
 (2, 'Approved'),
-(3, 'Rejected');
+(3, 'Rejected'),
+(4, 'Complete');
 
 --
 -- Indexes for dumped tables
@@ -316,7 +367,16 @@ ALTER TABLE `course`
 --
 ALTER TABLE `logs`
   ADD PRIMARY KEY (`logs_id`),
-  ADD KEY `faculty_id` (`person_id`);
+  ADD KEY `faculty_id` (`person_id`),
+  ADD KEY `schedule_id` (`schedule_id`);
+
+--
+-- Indexes for table `make_up_requests`
+--
+ALTER TABLE `make_up_requests`
+  ADD PRIMARY KEY (`request_id`),
+  ADD KEY `schedule_id` (`schedule_id`),
+  ADD KEY `status_id` (`status_id`);
 
 --
 -- Indexes for table `person`
@@ -333,21 +393,16 @@ ALTER TABLE `person_position`
   ADD PRIMARY KEY (`position_id`);
 
 --
--- Indexes for table `requests`
---
-ALTER TABLE `requests`
-  ADD PRIMARY KEY (`request_id`),
-  ADD KEY `person_id` (`person_id`),
-  ADD KEY `course_id` (`course_id`),
-  ADD KEY `section_id` (`section_id`),
-  ADD KEY `room_id` (`room_id`),
-  ADD KEY `status_id` (`status_id`);
-
---
 -- Indexes for table `rfid`
 --
 ALTER TABLE `rfid`
   ADD PRIMARY KEY (`rfid_id`);
+
+--
+-- Indexes for table `rfid_counter`
+--
+ALTER TABLE `rfid_counter`
+  ADD PRIMARY KEY (`counter_id`);
 
 --
 -- Indexes for table `rooms`
@@ -363,7 +418,14 @@ ALTER TABLE `schedule`
   ADD KEY `room_id` (`room_id`),
   ADD KEY `faculty_id` (`person_id`),
   ADD KEY `course_id` (`course_id`),
-  ADD KEY `section_id` (`section_id`);
+  ADD KEY `section_id` (`section_id`),
+  ADD KEY `type_id` (`type_id`);
+
+--
+-- Indexes for table `schedule_type`
+--
+ALTER TABLE `schedule_type`
+  ADD PRIMARY KEY (`type_id`);
 
 --
 -- Indexes for table `sections`
@@ -404,31 +466,37 @@ ALTER TABLE `course`
 -- AUTO_INCREMENT for table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `logs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `logs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+
+--
+-- AUTO_INCREMENT for table `make_up_requests`
+--
+ALTER TABLE `make_up_requests`
+  MODIFY `request_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `person`
 --
 ALTER TABLE `person`
-  MODIFY `person_id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `person_id` int(12) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `person_position`
 --
 ALTER TABLE `person_position`
-  MODIFY `position_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `requests`
---
-ALTER TABLE `requests`
-  MODIFY `request_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `position_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `rfid`
 --
 ALTER TABLE `rfid`
   MODIFY `rfid_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `rfid_counter`
+--
+ALTER TABLE `rfid_counter`
+  MODIFY `counter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rooms`
@@ -440,7 +508,13 @@ ALTER TABLE `rooms`
 -- AUTO_INCREMENT for table `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `schedule_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `schedule_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `schedule_type`
+--
+ALTER TABLE `schedule_type`
+  MODIFY `type_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `sections`
@@ -458,7 +532,18 @@ ALTER TABLE `section_type`
 -- AUTO_INCREMENT for table `status`
 --
 ALTER TABLE `status`
-  MODIFY `status_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `status_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `insert_logs_from_requests_event` ON SCHEDULE EVERY 1 DAY STARTS '2020-04-23 01:30:00' ON COMPLETION PRESERVE ENABLE DO Insert Into `logs` (person_id, schedule_id, log_date)
+Select person_id, s.schedule_id, CURRENT_DATE from `schedule` s INNER JOIN `make_up_requests` mur on s.schedule_id = mur.schedule_id where mur.request_date = CURRENT_DATE AND mur.status_id = 2$$
+
+CREATE DEFINER=`root`@`localhost` EVENT `insert_logs_event` ON SCHEDULE EVERY 1 DAY STARTS '2020-04-20 00:15:00' ON COMPLETION PRESERVE ENABLE DO INSERT INTO `logs` (person_id, schedule_id, log_date) Select person_id, schedule_id, CURRENT_DATE FROM `schedule` s where s.day = DAYOFWEEK(CURRENT_DATE)$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
