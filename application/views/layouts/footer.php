@@ -118,8 +118,6 @@
 			});
 		</script>
 
-		
-	<!-- <?php }.// $this->session->set_userdata('start_rfid', 'yes'); ?> -->
 
 	<div class="modal fade modal-fade-in-scale-up" id="rfid-alert" aria-hidden="true" aria-labelledby="exampleModalTitle"
 	 role="dialog" tabindex="-1">
