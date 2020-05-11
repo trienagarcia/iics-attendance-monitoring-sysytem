@@ -112,7 +112,7 @@
 
 
 				setInterval(function(){
-					// check_grace_period_before_absent();
+					 check_grace_period_before_absent();
 				}, 300000)
 
 			});
