@@ -874,7 +874,7 @@ class CustomController extends CI_Controller
             // date_diff
         }
 
-        echo '<br>';
+        // echo '<br>';
         print_r(json_encode("grace_period_res: " . $response));
     }
 

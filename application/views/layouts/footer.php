@@ -96,7 +96,7 @@
 
 				check_incoming_rfid();
 				check_request_date();
-				check_grace_period_before_absent();
+				// check_grace_period_before_absent();
 
 
 				$(document).on('click', '.dropdown-toggle', function(){
@@ -112,8 +112,8 @@
 
 
 				setInterval(function(){
-					check_grace_period_before_absent();
-				}, 120000)
+					// check_grace_period_before_absent();
+				}, 300000)
 
 			});
 		</script>
