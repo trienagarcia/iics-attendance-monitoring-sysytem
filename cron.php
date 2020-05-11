@@ -18,13 +18,13 @@ $insert_logs_from_requests_event = "INSERT Into `logs` (person_id, schedule_id, 
 									where mur.request_date = CURRENT_DATE AND mur.status_id = 2";
 
 if(mysqli_query($conn, $insert_logs_event)){
-    echo "Records inserted successfully.";
+
 } else{
     echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
 }
 
 if(mysqli_query($conn, $insert_logs_from_requests_event)){
-    echo "Records inserted successfully.";
+
 } else{
     echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
 }
