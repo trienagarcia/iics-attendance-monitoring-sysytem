@@ -51,7 +51,7 @@ class CustomController extends CI_Controller
             'password' => sha1($this->input->post('password')),
             'first_name' => $this->input->post('fname'),
             'last_name' => $this->input->post('lname'),
-            'position_Id' => '2',
+            'position_Id' => '3',
             'rfid_id' => $this->input->post('rfid'),
             'person_number' => $this->input->post('faculty_number')
         );
@@ -876,6 +876,21 @@ class CustomController extends CI_Controller
 
         echo '<br>';
         print_r(json_encode("grace_period_res: " . $response));
+    }
+
+    public function newPassword() {
+        $table = 'person';
+        $field = "person_id";
+        $where_value = $this->input->post('person_id');
+        $data = array(
+            'password' => sha1($this->input->post('password'))
+        );
+
+        $email = trim($this->input->post('email'));
+
+        $response = $this->Global_model->update_data($table, $data, $field, $where_value);
+
+        print_r(json_encode($response));
     }
 
 

@@ -106,6 +106,64 @@
 	</div>
 	<!-- End Add Account Modal -->
 
+	<!-- Change Password modal -->
+	<div class="modal fade modal-fade-in-scale-up" id="new-pass-modal" aria-hidden="true" aria-labelledby="exampleModalTitle"
+	 role="dialog" tabindex="-1">
+		<div class="modal-dialog modal-simple">
+			<div class="modal-content">
+				<div class="modal-header bgc-primary">
+					<h4 class="modal-title white mt-15">New Password</h4>
+					<button type="button" class="close white" data-dismiss="modal" aria-label="Close">
+			       	 	<span aria-hidden="true">×</span>
+			        </button>
+				</div>
+				<div class="modal-body mt-15">
+					<form id="form-addadmin" method="post">
+						<div class="form-group">
+							<div class="row">
+								<input type="hidden" id="np_person_id" name="np_person_id" value='' />
+								<div class="col-md-12">
+									<div class="label-input">Email</div>
+									<input type="email" class="form-control form-input" id="np-email" name="np-email" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="label-input">First Name </div>
+									<input type="text" class="form-control form-input" id="np-fname" name="np-fname" readonly>
+								</div>
+								<div class="col-md-6">
+									<div class="label-input">Last Name </div>
+									<input type="text" class="form-control form-input" id="np-lname" name="np-lname" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="label-input">Faculty Number</div>
+									<input type="text" class="form-control form-input" id="np-faculty_number" name="np-faculty_number" readonly>
+								</div>
+								<div class="col-md-6">
+									<div class="label-input">Password <span class="required">*</span></div>
+									<input type="text" class="form-control form-input" id="new-pword" name="new-pword" readonly>
+								</div>
+							</div>
+						</div>
+					</form>
+					<div class="message"><span>Please take note of the new password.</span></div>
+				</div>
+
+				<div class="modal-footer">
+						<button type="button" class="btn btn-dark" data-dismiss="modal">Cancel</button>
+						<button type="button" id="btn-confirm-new-pass" class="btn btn-primary">Confirm</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 <script>
 	var users;
 	$(document).ready(function() {
@@ -127,7 +185,10 @@
 				{ data: 'rfid_data'},
 				{ data: 'created_at'},
 				{ data: 'updated_at' },
-				{ defaultContent: "<button class='btn btn-danger btn-sm btn-delete'>Delete</button>"}
+				{ defaultContent: "<button class='btn btn-success btn-sm btn-new-pass'>Reset Password</button>" + 
+									"<button class='btn btn-danger btn-sm btn-delete'>Delete</button>"
+				
+			}
 				],
 				columnDefs: [
 				{ className: "hidden", "targets": [0]},
@@ -211,6 +272,23 @@
             });
 		});
 
+		$(document).on('click', '#btn-confirm-new-pass', function() {
+			$.ajax({
+                url: '<?=base_url()?>ajax/new-pass',
+                type: 'POST',
+                data: {
+                	person_id: $('#np_person_id').val(),
+                	password: $('#new-pword').val(),
+                	email: $('#np-email').val()
+                },
+                success:function(data) {
+                	$('#new-pass-modal').modal('hide');
+                	alert("Password reset Successfully.");
+                	users.ajax.reload();
+                }
+            });
+		});
+
 		$(document).on('click', '.btn-delete', function() {
 			var id = $(this).closest('tr').find('td').eq(0).text();
 			$.ajax({
@@ -223,6 +301,28 @@
                 	$('#add-account-modal').modal('hide');
                 	alert("Account Successfully Deleted!");
                 	users.ajax.reload();
+                }
+            });
+		});
+
+		$(document).on('click', '.btn-new-pass', function() {
+			$('#new-pass-modal').modal('show');
+			var id = $(this).closest('tr').find('td').eq(0).text();
+			var email = $(this).closest('tr').find('td').eq(1).text();
+			var fname = $(this).closest('tr').find('td').eq(2).text();
+			var lname = $(this).closest('tr').find('td').eq(3).text();
+			var faculty_number = $(this).closest('tr').find('td').eq(4).text();
+			$("#np-email").val(email);
+			$("#np-faculty_number").val(faculty_number);
+			$("#np-fname").val(fname);
+			$("#np-lname").val(lname);
+			$("#np_person_id").val(id);
+			$.ajax({
+                url: '<?=base_url()?>ajax/get-new-password',
+                type: 'GET',
+                success:function(data) {
+                	var result = JSON.parse(data);
+                	$('#new-pword').val(result.password);
                 }
             });
 		});
