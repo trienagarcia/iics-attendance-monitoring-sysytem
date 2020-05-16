@@ -76,12 +76,35 @@ $query_builder = TRUE;
 $root  = "http://".$_SERVER['HTTP_HOST'];
 $root .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
 
+// $db['default'] = array(
+// 	'dsn'	=> '',
+// 	'hostname' => 'localhost',
+// 	'username' => 'uhtgkekzke',
+// 	'password' => 'Password1',
+// 	'database' => 'uhtgkekzke',
+// 	'dbport' => '3306',
+// 	'dbdriver' => 'mysqli',
+// 	'dbprefix' => '',
+// 	'pconnect' => FALSE,
+// 	'db_debug' => (ENVIRONMENT !== 'production'),
+// 	'cache_on' => FALSE,
+// 	'cachedir' => '',
+// 	'char_set' => 'utf8',
+// 	'dbcollat' => 'utf8_general_ci',
+// 	'swap_pre' => '',
+// 	'encrypt' => FALSE,
+// 	'compress' => FALSE,
+// 	'stricton' => FALSE,
+// 	'failover' => array(),
+// 	'save_queries' => TRUE
+// );
+
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
-	'username' => 'uhtgkekzke',
-	'password' => 'Password1',
-	'database' => 'uhtgkekzke',
+	'username' => 'root',
+	'password' => '',
+	'database' => 'attendance_monitoring',
 	'dbport' => '3306',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -98,3 +121,4 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+

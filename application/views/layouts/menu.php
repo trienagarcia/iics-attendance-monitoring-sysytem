@@ -64,9 +64,9 @@
 					<li id="home" class="nav-item">
 				 		<a class="nav-link nav-color" href="<?=base_url()?>time-logs-user">My Time Logs <span class="sr-only">(current)</span></a>
 				 	</li>
-					<li id="add-request" class="nav-item">
+<!-- 					<li id="add-request" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>add-request">Add Make Up Request</a>
-					</li>
+					</li> -->
 					<li id="my-requests" class="nav-item">
 						<a class="nav-link nav-color" href="<?=base_url()?>submitted-requests">My Requests</a>
 					</li>

@@ -5,6 +5,7 @@
 			<h3>View Requests</h3>
 		</div>
 		<div class="section-body">
+        
         <table id="table-submitted-requests" class="table table-hover dt-responsive" cellspacing="0" width="100%">
 				<thead>
 					<tr>
@@ -61,11 +62,13 @@
   </div>
 </div>
 
+
+
 <!-- annthonite -->
 <script>
 
-$('#view-requests a').removeClass('nav-color');
-$('#view-requests a').addClass('nav-active');
+$('#requests a').removeClass('nav-color');
+$('#requests a').addClass('nav-active');
 
 var requests = $("#table-submitted-requests").DataTable({
     ajax : {

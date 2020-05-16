@@ -106,8 +106,8 @@
 				});
 
 				setInterval(function(){ 
-					check_incoming_rfid();
-					check_request_date();
+					// check_incoming_rfid();
+					// check_request_date();
 				}, 1500);
 
 

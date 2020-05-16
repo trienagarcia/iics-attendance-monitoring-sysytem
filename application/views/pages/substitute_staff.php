@@ -44,6 +44,7 @@
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Scheduled Date</th>
+						<th>Day</th>
 				</thead>
 				<tfoot>
 					<tr>
@@ -55,6 +56,7 @@
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Scheduled Date</th>
+						<th>Day</th>
 					</tr>
 				</tfoot>
 			</table>
@@ -115,7 +117,8 @@
 				{ data: 'room_number' },
 				{ data: 'start_time' },
 				{ data: 'end_time' },
-				{ data: 'request_date' }
+				{ data: 'request_date' },
+				{ data: 'day' }
 			]
 		});
 
@@ -199,7 +202,8 @@
 					{ data: 'room_number' },
 					{ data: 'start_time' },
 					{ data: 'end_time' },
-					{ data: 'request_date' }
+					{ data: 'request_date' },
+					{ data: 'day' }
 				],
 				columnDefs: []
 			});

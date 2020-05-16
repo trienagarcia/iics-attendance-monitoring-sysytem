@@ -79,7 +79,6 @@ $route['ajax/delete-account'] = 'customController/deleteAccount';
 $route['ajax/add-new-announcement'] = 'customController/addAnnouncement';
 $route['ajax/get-time-logs'] = 'customController/gettimelogs';
 $route['ajax/get-user-time-logs'] = 'customController/getusertimelogs';
-$route['ajax/get-user-compiled-reports'] = 'customController/getusercompiledreports';
 $route['ajax/get-user-submitted-requests'] = 'customController/getusersubmittedrequests';
 $route['ajax/login'] = 'globalController/validatelogin';
 $route['ajax/update-password'] = 'customController/updatepassword';
@@ -120,3 +119,5 @@ $route['ajax/get-filtered-schedule'] = 'customController/getFilteredSchedule';
 
 
 $route['ajax/new-pass'] = 'customController/newPassword';
+
+$route['ajax/batch-insert-to-logs'] = 'customController/batch_insert_into_logs';

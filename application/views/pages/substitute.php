@@ -44,6 +44,7 @@
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Scheduled Date</th>
+						<th>Day</th>
 						<th>Actions</th>
 				</thead>
 				<tfoot>
@@ -56,6 +57,7 @@
 						<th>Start Time</th>
 						<th>End Time</th>
 						<th>Scheduled Date</th>
+						<th>Day</th>
 						<th>Actions</th>
 					</tr>
 				</tfoot>
@@ -118,6 +120,7 @@
 				{ data: 'start_time' },
 				{ data: 'end_time' },
 				{ data: 'request_date' },
+				{ data: 'day' },
 				{ render: function ( data, type, row, meta ) {
 						return `
 							<button class='btn btn-info btn-sm btn-info' id='btnUpdateSubstitute' scheduleID='` + row['schedule_id'] + `' personID='` + row['person_id'] + `' style="margin-top:5px">Substitute</button>
@@ -208,6 +211,7 @@
 					{ data: 'start_time' },
 					{ data: 'end_time' },
 					{ data: 'request_date' },
+					{ data: 'day' },
 					{ render: function ( data, type, row, meta ) {
 							var sRemarks = row['remarks'] === null ? '' : row['remarks'];
 							return `

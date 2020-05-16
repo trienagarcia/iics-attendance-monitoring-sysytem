@@ -78,7 +78,7 @@ date_default_timezone_set('Asia/Taipei');
 		INNER JOIN `sections` section on section.section_id = s.section_id
 		INNER JOIN `attendance` attend ON attend.attendance_id = log.attendance_id;
 		*/
-		public function get_all_time_logs() {
+		public function get_all_time_logs( $date ) {
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.log_date, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, 
 				make_up_requests.request_date");
 			$this->db->from("schedule");
@@ -90,6 +90,7 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");			
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id", "left");
+			$this->db->where("logs.log_date <= ", $date);
 			$this->db->group_by("schedule.schedule_id");
 			// ADD and date
 			$q = $this->db->get();
@@ -98,7 +99,7 @@ date_default_timezone_set('Asia/Taipei');
 
 		// added 04/23/2020
 		public function get_all_schedule() {
-			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, make_up_requests.request_date");
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, make_up_requests.request_date, rooms.room_id, schedule.type_id, make_up_requests.status_id, schedule.day");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
@@ -106,15 +107,14 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("sections", "sections.section_id = schedule.section_id");			
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", 
-				"schedule.schedule_id = make_up_requests.schedule_id 
-				AND make_up_requests.status_id IN (2)", "left");
+				"schedule.schedule_id = make_up_requests.schedule_id", "left");
 			// ADD and date
 			$q = $this->db->get();
 			return $q->result();
 		}
 
 		public function get_filtered_schedule() {
-			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, make_up_requests.request_date");
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, make_up_requests.request_date, rooms.room_id, schedule.type_id, make_up_requests.status_id, schedule.day");
 			$this->db->from("schedule");
 			$this->db->join("person", "schedule.person_id = person.person_id");
 			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
@@ -122,8 +122,7 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("sections", "sections.section_id = schedule.section_id");			
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", 
-				"schedule.schedule_id = make_up_requests.schedule_id 
-				AND make_up_requests.status_id IN (2)", "left");
+				"schedule.schedule_id = make_up_requests.schedule_id", "left");
 
 			if (!empty($this->input->get('person_id'))) {
 				$this->db->where("person.person_id = ", $this->input->get('person_id'));
@@ -145,6 +144,7 @@ date_default_timezone_set('Asia/Taipei');
 			INNER JOIN attendance a ON a.attendance_id = log.attendance_id AND p.person_id = 8
 		*/
 		public function get_all_user_time_logs() {
+			$current_date = date('Y-m-d');
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.log_date, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, 
 				make_up_requests.request_date");
 			$this->db->from("schedule");
@@ -157,18 +157,22 @@ date_default_timezone_set('Asia/Taipei');
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id", "left");
 			$this->db->where("logs.person_id = ", $this->session->userdata('person_id'));
-			// $this->db->group_by("schedule.schedule_id");
 
 			// annthonite
 			if (!empty($this->input->get('date'))) {
-				$this->db->where("DATE_FORMAT(logs.time_in, '%Y-%m-%d') = ", $this->input->get('date'));
+				$this->db->where("logs.log_date = ", $this->input->get('date'));
+			}else{
+				$this->db->where("logs.log_date <= ", $current_date);
 			}
+
+			
 			$q = $this->db->get();
 			return $q->result();
 		}
 
+
 		// annthonite
-		public function get_filtered_time_logs() {
+		public function get_filtered_time_logs($date) {
 			$this->db->select("logs.logs_id, person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, logs.time_in, logs.time_out, attendance.attendance_name, logs.remarks, logs.attendance_id, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, 
 				make_up_requests.request_date, logs.log_date");
 			$this->db->from("schedule");
@@ -180,6 +184,7 @@ date_default_timezone_set('Asia/Taipei');
 			$this->db->join("attendance", "attendance.attendance_id = logs.attendance_id");			
 			// add - 04/14 - add make up requests date
 			$this->db->join("make_up_requests", "schedule.schedule_id = make_up_requests.schedule_id", "left");
+			$this->db->where("logs.log_date <= ", $date);
 
 			if (!empty($this->input->get('person_id'))) {
 				$this->db->where("person.person_id = ", $this->input->get('person_id'));
@@ -193,16 +198,14 @@ date_default_timezone_set('Asia/Taipei');
 		}
 
 		/*
-			SELECT * FROM `requests` 
-			INNER JOIN `rooms`
-			ON requests.room_id = rooms.room_id
-			INNER JOIN `sections`
-			ON requests.section_id = sections.section_id
-			INNER JOIN `course`
-			ON requests.course_id = course.course_id
-			INNER JOIN `status`
-			ON requests.status_id = `status`.status_id
-			WHERE requests.person_id = ;
+			SELECT * FROM `make_up_requests` 
+			JOIN `schedule` ON `schedule`.`schedule_id` = `make_up_requests`.`schedule_id` 
+			JOIN `rooms` ON `schedule`.`room_id` = `rooms`.`room_id` 
+			JOIN `sections` ON `schedule`.`section_id` = `sections`.`section_id` 
+			JOIN `course` ON `schedule`.`course_id` = `course`.`course_id` 
+			JOIN `status` ON `make_up_requests`.`status_id` = `status`.`status_id` 
+			JOIN `person` ON `schedule`.`person_id` = `person`.`person_id` 
+			WHERE `schedule`.`person_id` = '8';
 		*/
 		public function get_user_submitted_requests($person_id) {
 			$this->db->select("schedule.schedule_id, schedule.room_id, rooms.room_number, schedule.section_id, sections.section_name, 
@@ -342,6 +345,33 @@ date_default_timezone_set('Asia/Taipei');
 			}
 
 			return null;
+		}
+
+		public function get_schedule_by_date($day) {
+			$this->db->select("schedule.person_id, schedule.schedule_id, make_up_requests.status_id, schedule.type_id, make_up_requests.request_date");
+
+			$this->db->from("schedule");
+			$this->db->join("make_up_requests", 
+				"schedule.schedule_id = make_up_requests.schedule_id", "left");
+			$this->db->where("schedule.day", $day);
+			$q = $this->db->get();
+			return $q->result();
+		}
+
+		public function get_all_schedule_by_day($day) {
+			$this->db->select("person.first_name, person.last_name, course.course_code, sections.section_name, rooms.room_number, schedule.schedule_id, schedule.person_id, schedule.start_time, schedule.end_time, make_up_requests.request_date, rooms.room_id, schedule.type_id, make_up_requests.status_id");
+			$this->db->from("schedule");
+			$this->db->join("person", "schedule.person_id = person.person_id");
+			$this->db->join("rooms", "rooms.room_id = schedule.room_id");
+			$this->db->join("course", "course.course_id = schedule.course_id");
+			$this->db->join("sections", "sections.section_id = schedule.section_id");			
+			// add - 04/14 - add make up requests date
+			$this->db->join("make_up_requests", 
+				"schedule.schedule_id = make_up_requests.schedule_id", "left");
+			$this->db->where("schedule.day", $day);
+			// ADD and date
+			$q = $this->db->get();
+			return $q->result();
 		}
 
 

@@ -56,7 +56,7 @@
 
 		// annthonite
 		$('#inputDate').datepicker({
-			// minDate     : new Date(),
+			maxDate: '0',
 			dateFormat  : 'yy-mm-dd',
 			changeMonth : true,
 			changeYear  : true,
@@ -116,16 +116,6 @@
 			} else {
 				return false;
 			}
-		});
-
-		$(document).on('click', '.btn-view-report', function(data) {
-			var report_id = $(this).attr('data-id');
-			window.location.href = "<?=base_url()?>report/"+report_id;
-		});
-
-		$(document).on('click', '.btn-edit-report', function(data) {
-			var form_id = "#form_" + $(this).attr('data-id');
-			$(form_id).submit();
 		});
 
 </script>

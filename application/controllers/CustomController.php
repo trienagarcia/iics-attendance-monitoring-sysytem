@@ -316,7 +316,8 @@ class CustomController extends CI_Controller
 
 
     public function getTimeLogs() {
-        $result = $this->Custom_model->get_all_time_logs();
+        $current_date = date('Y-m-d');
+        $result = $this->Custom_model->get_all_time_logs($current_date);
 
         // print("<pre>".print_r($result,true)."</pre>");
         print_r(json_encode($result));
@@ -332,20 +333,45 @@ class CustomController extends CI_Controller
     public function getUserSubmittedRequests() {
         $person_id = $this->session->userdata('person_id');
         $result = $this->Custom_model->get_user_submitted_requests($person_id);
+        // echo 'last quyery: ' . $this->db->last_query() . '<br>';
         print_r(json_encode($result));
     }
 
     // annthonite
     public function getFilteredTimeLogs() {
-        $aResult = $this->Custom_model->get_filtered_time_logs();
+        $date = date('Y-m-d');
+        $aResult = $this->Custom_model->get_filtered_time_logs($date);
         // print("<pre>".print_r($aResult,true)."</pre>");
         print_r(json_encode($aResult));
     }
 
     public function getFilteredSchedule() {
-        $aResult = $this->Custom_model->get_filtered_schedule();
+        $all_schedules = $this->Custom_model->get_filtered_schedule();
 
-        print_r(json_encode($aResult));
+        $current_schedules = array();
+
+        $day_of_week = [ "1" => "Sunday", "2" => "Monday", "3" => "Tuesday", "4" => "Wednesday", "5" => "Thursday", "6" => "Friday", "7" => "Saturday"]; 
+
+        // print("<pre>".print_r($all_schedules,true)."</pre>");
+
+
+        foreach($all_schedules as $candidate_schedule) {
+
+            $candidate_schedule->day = $day_of_week[$candidate_schedule->day];
+            
+            if($candidate_schedule->type_id == 2 && ( $candidate_schedule->status_id == 1 || $candidate_schedule->status_id == 2 ) ) {
+
+                array_push($current_schedules, $candidate_schedule);
+            }elseif($candidate_schedule->type_id == 1) {
+                array_push($current_schedules, $candidate_schedule);
+            }
+
+
+        }
+
+        $current_schedules = array_values((array)$this->convertToObject($current_schedules));
+
+        print_r(json_encode($current_schedules));
     }
 
     // annthonite
@@ -373,11 +399,34 @@ class CustomController extends CI_Controller
 
     public function getAllSchedule() {
         $date = date('Y-m-d');
-        $result = $this->Custom_model->get_all_schedule();
+        $all_schedules = $this->Custom_model->get_all_schedule();
 
-        // print("<pre>".print_r($result,true)."</pre>");
+        $current_schedules = array();
 
-        print_r(json_encode($result));
+        $day_of_week = [ "1" => "Sunday", "2" => "Monday", "3" => "Tuesday", "4" => "Wednesday", "5" => "Thursday", "6" => "Friday", "7" => "Saturday"]; 
+
+        // print("<pre>".print_r($all_schedules,true)."</pre>");
+
+
+        foreach($all_schedules as $candidate_schedule) {
+
+            $candidate_schedule->day = $day_of_week[$candidate_schedule->day];
+            
+            if($candidate_schedule->type_id == 2 && ( $candidate_schedule->status_id == 1 || $candidate_schedule->status_id == 2 ) ) {
+
+                array_push($current_schedules, $candidate_schedule);
+            }elseif($candidate_schedule->type_id == 1) {
+                array_push($current_schedules, $candidate_schedule);
+            }
+
+
+        }
+
+        $current_schedules = array_values((array)$this->convertToObject($current_schedules));
+
+        // print("<pre>".print_r($current_schedules,true)."</pre>");
+
+        print_r(json_encode($current_schedules));
     }
 
     private function getAllApprovedSchedules() {
@@ -473,8 +522,8 @@ class CustomController extends CI_Controller
                 }
 
             }
-            // echo 'schedules<br>';
-            // print("<pre>".print_r($schedules,true)."</pre>");
+            echo 'schedules<br>';
+            print("<pre>".print_r($schedules,true)."</pre>");
 
             $open_schedules = $this->computeOpenSchedules( $schedules, $room );
             $final_schedule = array_merge($final_schedule, $open_schedules);
@@ -891,6 +940,61 @@ class CustomController extends CI_Controller
         $response = $this->Global_model->update_data($table, $data, $field, $where_value);
 
         print_r(json_encode($response));
+    }
+
+    public function batch_insert_into_logs() {
+        $current_date = date('Y-m-d');
+        $timestamp = strtotime($current_date);
+        $day = intval(date('w', $timestamp)) + 1;
+        $MAX_DAYS = 20;
+        $batch_data = array();
+
+        // Select person_id, schedule_id, CURRENT_DATE FROM `schedule` s where s.day = DAYOFWEEK(CURRENT_DATE)
+        
+        for( $idx = 0; $idx < $MAX_DAYS; $idx++ ) {
+
+            echo '&nbsp;&nbsp;&nbsp; Current Date: ' . $current_date . '<br>';
+            echo '&nbsp;&nbsp;&nbsp; Day: ' . $day . '<br>';
+
+            $result = $this->Custom_model->get_schedule_by_date($day);
+            echo '&nbsp;&nbsp;&nbsp; Count: ' . count($result) . '<br><br>';
+
+            foreach($result as $val) {
+                
+                if( $val->type_id == 1 ) {
+                    $data = array( 'person_id' => $val->person_id, 'schedule_id' => $val->schedule_id, 'log_date' => $current_date );
+                    array_push($batch_data, $data);
+                }
+
+                else if( $val->type_id == 2 && $val->status_id == 2 && $current_date == $val->request_date ) {
+                    $data = array( 'person_id' => $val->person_id, 'schedule_id' => $val->schedule_id, 'log_date' => $current_date );
+                    array_push($batch_data, $data);
+                }
+
+            }
+            
+
+            $current_date = date('Y-m-d', strtotime($current_date . " + 1 day"));
+            $timestamp = strtotime($current_date);
+            $day = intval(date('w', $timestamp)) + 1;
+        }
+
+
+        print("result: <br><pre>".print_r($batch_data,true)."</pre>");
+
+        $insert_result = $this->Global_model->insert_batch_data('logs', $batch_data);
+
+        if($insert_result == "failed") {
+            echo '<br>&nbsp;&nbsp;&nbsp;Batch Insert Failed!' . '<br>';
+        }else{
+            echo '<br>&nbsp;&nbsp;&nbsp;Batch Insert Successful' . '<br>';
+        }
+        
+    }
+
+    public function batch_insert_requests_to_logs() {
+        // Insert Into `logs` (person_id, schedule_id, log_date)
+        // Select person_id, s.schedule_id, CURRENT_DATE from `schedule` s INNER JOIN `make_up_requests` mur on s.schedule_id = mur.schedule_id where mur.request_date = CURRENT_DATE AND mur.status_id = 2
     }
 
 
