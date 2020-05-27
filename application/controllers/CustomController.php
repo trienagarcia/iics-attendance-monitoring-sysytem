@@ -43,6 +43,8 @@ class CustomController extends CI_Controller
 
     public function addAccount()
     {
+        $rfid_data = array('rfid_data' => $this->input->post('rfid'));
+        $rfid_id = $this->Global_model->insert_data('rfid', $rfid_data);
         $table = 'person';
         $courses = array($this->input->post('courses'));
         $courses_str = implode(",", $courses);
@@ -52,7 +54,7 @@ class CustomController extends CI_Controller
             'first_name' => $this->input->post('fname'),
             'last_name' => $this->input->post('lname'),
             'position_Id' => '3',
-            'rfid_id' => $this->input->post('rfid'),
+            'rfid_id' => $rfid_id,
             'person_number' => $this->input->post('faculty_number')
         );
 

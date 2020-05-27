@@ -87,10 +87,11 @@
 							<div class="row">
 		                        <div class="col-md-6">
 									<div class="label-input">RFID <span class="required">*</span></div>
-									<select class="form-control required-input" name="rfid" id="rfid" 
-												data-parsley-required="true" >
-		                            	<option value="" selected="selected">Select RFID</option>
-		                        	</select>
+<!-- 									<select class="form-control required-input" name="rfid" id="rfid" 
+												data-parsley-required="true" > -->
+<!-- 		                            	<option value="" selected="selected">Select RFID</option> -->
+									<input type="text" class="form-control form-input" id="rfid" name="rfid" >
+<!-- 		                        	</select> -->
 		                        </div>
 		                    </div>
 						</div>
