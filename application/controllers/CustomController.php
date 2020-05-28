@@ -984,12 +984,16 @@ class CustomController extends CI_Controller
 
         print("result: <br><pre>".print_r($batch_data,true)."</pre>");
 
-        $insert_result = $this->Global_model->insert_batch_data('logs', $batch_data);
+        if(!empty($batch_data)) {
+            $insert_result = $this->Global_model->insert_batch_data('logs', $batch_data);
 
-        if($insert_result == "failed") {
-            echo '<br>&nbsp;&nbsp;&nbsp;Batch Insert Failed!' . '<br>';
+            if($insert_result == "failed") {
+                echo '<br>&nbsp;&nbsp;&nbsp;Batch Insert Failed!' . '<br>';
+            }else{
+                echo '<br>&nbsp;&nbsp;&nbsp;Batch Insert Successful' . '<br>';
+            }
         }else{
-            echo '<br>&nbsp;&nbsp;&nbsp;Batch Insert Successful' . '<br>';
+            echo '<br>&nbsp;&nbsp;&nbsp;Batch Data Empty. Please Add Schedules.' . '<br>';
         }
         
     }
